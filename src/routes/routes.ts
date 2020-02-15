@@ -17,7 +17,7 @@ export function handleEdit(con: Connection): RequestHandler {
             con.query(
                 `SELECT * FROM TASK 
                 WHERE 
-                    (TASK_ID = '${task_id}')`, 
+                    (TASK_ID = '${task_id}') AND (TASK_ID > 0)`, 
                 (error, result) => {
                     if (error || result.rows.length <= 0) {
                         res.redirect('/');
@@ -35,7 +35,7 @@ export function handleEdit(con: Connection): RequestHandler {
 export function handleIndex(con: Connection): RequestHandler {
     return (req, res) => {
         con.query(
-            'SELECT * FROM TASK', 
+            'SELECT * FROM TASK WHERE (TASK_ID > 0)', 
             (error, result) => {
                 if (error) {
                     //TODO: add rendering with error messages
@@ -89,7 +89,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                         ESTIMATED_END_AT = ${end_at}
                         FILE_ID = COALESCE(FILE_ID, ${file_id})
                     WHERE 
-                        TASK_ID = ${task_id}`,
+                        TASK_ID = ${task_id} AND (TASK_ID > 0)`,
                     (error, result) => {
                         if (error) {
                             //TODO: add rendering with error messages

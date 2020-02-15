@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ES2018",
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "outDir": "build",
+        "listEmittedFiles": true,
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "moduleResolution": "node"
+    }
+}

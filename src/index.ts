@@ -18,9 +18,6 @@ const connectionOptions: ConnectionOptions = {
 const con: Connection = new PostgreSQLConnection(connectionOptions);
 con.connect();
 
-app.use(express.urlencoded());
-app.use(express.json());
-
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
 

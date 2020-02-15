@@ -1,7 +1,7 @@
 import Busboy from 'busboy';
 import { Request, Response } from 'express';
 import { createWriteStream, existsSync } from 'fs';
-import { basename, extname,join, normalize } from 'path';
+import { basename, extname, join, normalize } from 'path';
 import { Connection } from '../lib/connection';
 import { STATUS, UPLOADS_DIR } from '../lib/constants';
 import { parseDate } from '../lib/utils';
@@ -125,21 +125,19 @@ export function handleSubmitTask(con: Connection): RequestHandler {
         });
 
         busboy.on('file', (fieldname, file, filename) => {
-            filename = con.escape(filename);
             con.query(
                 `INSERT INTO TASK_FILE
                     (TASK_ID, FILE_NAME)
                 VALUES
-                    (-1, ${filename})
+                    (-1, ${con.escape(filename)})
                 RETURNING
                     file_id`,
                 (error, result) => {
                     if (error) {
                         throw error;
                     } else {
-                        body.file_id = result.rows[0].id;
+                        body.file_id = result.rows[0].file_id;
                         let ext = extname(filename);
-                        ext = ext ? `.${ext}` : '';
                         const saveTo = join(process.cwd(), UPLOADS_DIR, `${body.file_id}${ext}`);
                         file.pipe(createWriteStream(saveTo));
                     }

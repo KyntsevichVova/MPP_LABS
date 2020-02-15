@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { existsSync } from 'fs';
+import { basename, join, normalize } from 'path';
 import { Connection } from '../lib/connection';
-import { STATUS } from '../lib/constants';
+import { STATUS, UPLOADS_DIR } from '../lib/constants';
 import { parseDate } from '../lib/utils';
 
 type RequestHandler = (req: Request, res: Response) => void;
@@ -86,6 +88,22 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     }
                 }
             );
+        }
+    }
+}
+
+export function handleDownload(): RequestHandler {
+    return (req, res) => {
+        let filename = req.query.filename;
+        if (!filename) {
+            res.status(404).end();
+        } else {
+            filename = join(process.cwd(), UPLOADS_DIR, basename(normalize(filename)));
+            if (existsSync(filename)) {
+                res.download(filename);
+            } else {
+                res.status(404).end();
+            }
         }
     }
 }

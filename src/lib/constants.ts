@@ -12,3 +12,5 @@ export const STATUS = {
         value: "CLOSED"
     }
 };
+
+export const UPLOADS_DIR = "uploads";

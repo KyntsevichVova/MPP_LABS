@@ -1,7 +1,7 @@
 import Busboy from 'busboy';
 import { Request, Response } from 'express';
 import { createWriteStream, existsSync } from 'fs';
-import { basename, extname, join, normalize } from 'path';
+import { basename, join, normalize } from 'path';
 import { Connection } from '../lib/connection';
 import { STATUS, UPLOADS_DIR } from '../lib/constants';
 import { parseDate } from '../lib/utils';
@@ -19,7 +19,7 @@ export function handleEdit(con: Connection): RequestHandler {
                 WHERE 
                     (TASK_ID = '${task_id}') AND (TASK_ID > 0)`, 
                 (error, result) => {
-                    if (error || result.rows.length <= 0) {
+                    if (error || result.rows.length < 1) {
                         res.redirect('/');
                     } else {
                         res.render('edit', {
@@ -87,7 +87,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                         TASK_TEXT = ${task_text},
                         TASK_STATUS = ${status},
                         ESTIMATED_END_AT = ${end_at}
-                        FILE_ID = COALESCE(FILE_ID, ${file_id})
+                        FILE_ID = COALESCE(${file_id}, FILE_ID)
                     WHERE 
                         TASK_ID = ${task_id} AND (TASK_ID > 0)`,
                     (error, result) => {
@@ -137,8 +137,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                         throw error;
                     } else {
                         body.file_id = result.rows[0].file_id;
-                        let ext = extname(filename);
-                        const saveTo = join(process.cwd(), UPLOADS_DIR, `${body.file_id}${ext}`);
+                        const saveTo = join(process.cwd(), UPLOADS_DIR, `${body.file_id}`);
                         file.pipe(createWriteStream(saveTo));
                     }
                 }
@@ -157,15 +156,26 @@ export function handleSubmitTask(con: Connection): RequestHandler {
     }
 }
 
-export function handleDownload(): RequestHandler {
+export function handleDownload(con: Connection): RequestHandler {
     return (req, res) => {
-        let filename = req.query.filename;
-        if (!filename) {
+        const file_id = Number.parseInt(req.query.file_id);
+        if (!file_id) {
             res.status(404).end();
         } else {
-            filename = join(process.cwd(), UPLOADS_DIR, basename(normalize(filename)));
+            const filename = join(process.cwd(), UPLOADS_DIR, basename(normalize(String(file_id))));
             if (existsSync(filename)) {
-                res.download(filename);
+                con.query(
+                    `SELECT FILE_NAME FROM TASK_FILE
+                    WHERE
+                        FILE_ID = ${file_id}`, 
+                    (error, result) => {
+                        if (error || result.rows.length < 1) {
+                            res.status(404).end();
+                        } else {
+                            res.download(filename, result.rows[0].file_name);
+                        }
+                    }
+                );
             } else {
                 res.status(404).end();
             }

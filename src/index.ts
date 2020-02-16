@@ -24,7 +24,7 @@ app.set('views', join(__dirname, 'views'));
 app.get('/', handleIndex(con));
 app.get('/add', handleAdd());
 app.get('/edit', handleEdit(con));
-app.get('/download', handleDownload());
+app.get('/download', handleDownload(con));
 app.post('/submit_task', handleSubmitTask(con));
 
 app.listen(3000);

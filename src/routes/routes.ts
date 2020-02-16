@@ -62,7 +62,9 @@ export function handleIndex(con: Connection): RequestHandler {
                             task_text: value.task_text,
                             task_status: STATUS[value.task_status].text,
                             created_at: value.created_at,
-                            estimated_end_at: printDate(new Date(value.estimated_end_at))
+                            estimated_end_at: printDate(new Date(value.estimated_end_at)),
+                            dl: (new Date() >= new Date(value.estimated_end_at)),
+                            file_id: value.file_id
                         }
                     });
                     res.render('index', {
@@ -119,7 +121,22 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                             //TODO: add rendering with error messages
                             throw error;
                         } else {
-                            res.redirect(`/task?id=${task_id}`);
+                            con.query(
+                                `UPDATE TASK_FILE SET
+                                    TASK_ID = ${task_id}
+                                WHERE
+                                    FILE_ID = ${file_id}
+                                AND
+                                    TASK_ID = -1`,
+                                (error, result) => {
+                                    if (error) {
+                                        //TODO: add rendering with error messages
+                                        throw error;
+                                    } else {
+                                        res.redirect('/');
+                                    }
+                                }
+                            );
                         }
                     }
                 );
@@ -128,13 +145,31 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     `INSERT INTO TASK
                         (TASK_TEXT, TASK_STATUS, CREATED_AT, ESTIMATED_END_AT, FILE_ID)
                     VALUES
-                        (${task_text}, ${status}, CURRENT_DATE, ${end_at}, ${file_id})`,
+                        (${task_text}, ${status}, CURRENT_DATE, ${end_at}, ${file_id})
+                    RETURNING
+                        TASK_ID`,
                     (error, result) => {
                         if (error) {
                             //TODO: add rendering with error messages
                             throw error;
                         } else {
-                            res.redirect('/');
+                            const task_id = result.rows[0].task_id;
+                            con.query(
+                                `UPDATE TASK_FILE SET
+                                    TASK_ID = ${task_id}
+                                WHERE
+                                    FILE_ID = ${file_id}
+                                AND
+                                    TASK_ID = -1`,
+                                (error, result) => {
+                                    if (error) {
+                                        //TODO: add rendering with error messages
+                                        throw error;
+                                    } else {
+                                        res.redirect('/');
+                                    }
+                                }
+                            );
                         }
                     }
                 );
@@ -149,6 +184,10 @@ export function handleSubmitTask(con: Connection): RequestHandler {
         });
 
         busboy.on('file', (fieldname, file, filename) => {
+            if (filename.length === 0) {
+                file.resume();
+                return;
+            }
             con.query(
                 `INSERT INTO TASK_FILE
                     (TASK_ID, FILE_NAME)

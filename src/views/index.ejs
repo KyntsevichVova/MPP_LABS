@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100">
     <head>
         <title>Task Manager</title>
         <meta charset="utf-8">
@@ -9,26 +9,33 @@
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
             crossorigin="anonymous">
     </head>
-    <body>
+    <body class="h-100">
         <%- include("partial/navbar.ejs") %>
         <div class="container-fluid">
             <div class="row">
                 <% for (let i = 0; i < tasks.length; i++) { %>
                     <div class="col-3">
-                        <div class="card my-3">
+                        <div class="card my-3 bg-light">
+                            <div class="card-header">Task</div>
                             <div class="card-body">
-                                <p class="card-text">
-                                    <%= tasks[i].task_text %>
-                                </p>
-                                <div>
-                                    <%= tasks[i].task_status %>
-                                </div>
+                                <h6 class="card-subtitle">Status: <%= tasks[i].task_status %></h6>
+                                <h6 class="card-subtitle my-2 <%= tasks[i].dl ? 'text-danger' : '' %>">End at: <%= tasks[i].estimated_end_at %> </h6>
+                                <p class="card-text my-3"><%= tasks[i].task_text %></p>
+                                <a href="/edit?id=<%= tasks[i].task_id %>" class="btn btn-primary mr-1">Edit</a>
+                                <% if (tasks[i].file_id) { %>
+                                    <a href="/download?file_id=<%= tasks[i].file_id %>" class="btn btn-info ml-1">Attachment</a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 <% } %>
             </div>
         </div>
+        <% if (tasks.length < 1) { %>
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <h3>Nothing to show</h3>
+            </div>
+        <% } %>
         <!--<table>
             <thead>
                 <th scope="col">

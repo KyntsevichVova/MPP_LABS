@@ -11,13 +11,18 @@ type RequestHandler = (req: Request, res: Response) => void;
 export function handleEdit(con: Connection): RequestHandler {
     return (req, res) => {
         const task_id = Number.parseInt(req.query.id, 10);
+        const filter = req.query.filter ? con.escape(req.query.filter) : null;
         if (!task_id) {
             res.redirect('/');
         } else {
             con.query(
                 `SELECT * FROM TASK 
                 WHERE 
-                    (TASK_ID = '${task_id}') AND (TASK_ID > 0)`, 
+                    (TASK_ID = '${task_id}')
+                AND 
+                    (TASK_ID > 0)
+                AND
+                    (TASK_STATUS LIKE COALESCE(${filter}, '%'))`,
                 (error, result) => {
                     if (error || result.rows.length < 1) {
                         res.redirect('/');

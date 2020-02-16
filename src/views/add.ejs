@@ -10,6 +10,7 @@
             crossorigin="anonymous">
     </head>
     <body>
+        <%- include("partial/navbar.ejs") %>
         <form method="POST" action="/submit_task" enctype="multipart/form-data">
             <label for="task">Task:</label>
             <textarea id="task" maxlength="250" name="task_text"></textarea>

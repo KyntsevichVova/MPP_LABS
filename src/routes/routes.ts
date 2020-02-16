@@ -56,8 +56,17 @@ export function handleIndex(con: Connection): RequestHandler {
                         tasks: []
                     });
                 } else {
+                    let tasks: Array<any> = result.rows.map((value) => {
+                        return {
+                            task_id: value.task_id,
+                            task_text: value.task_text,
+                            task_status: STATUS[value.task_status].text,
+                            created_at: value.created_at,
+                            estimated_end_at: printDate(new Date(value.estimated_end_at))
+                        }
+                    });
                     res.render('index', {
-                        tasks: result.rows
+                        tasks: tasks
                     });
                 }
             }

@@ -11,7 +11,25 @@
     </head>
     <body>
         <%- include("partial/navbar.ejs") %>
-        <table>
+        <div class="container-fluid">
+            <div class="row">
+                <% for (let i = 0; i < tasks.length; i++) { %>
+                    <div class="col-3">
+                        <div class="card my-3">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <%= tasks[i].task_text %>
+                                </p>
+                                <div>
+                                    <%= tasks[i].task_status %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <!--<table>
             <thead>
                 <th scope="col">
                     Task
@@ -40,6 +58,6 @@
                     </tr>
                 <% } %>
             </tbody>
-        </table>
+        </table>-->
     </body>
 </html>

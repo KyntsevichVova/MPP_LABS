@@ -51,9 +51,10 @@ export function handleIndex(con: Connection): RequestHandler {
             AND
                 (TASK_STATUS LIKE COALESCE(${filter}, '%'))`, 
             (error, result) => {
-                if (error) {
-                    //TODO: add rendering with error messages
-                    throw error;
+                if (error || result.rows.length < 1) {
+                    res.render('index', {
+                        tasks: []
+                    });
                 } else {
                     res.render('index', {
                         tasks: result.rows

@@ -38,3 +38,12 @@ export function parseDate(s: string): string {
         padLeft(String(day), 2, '0'),
     ].join('-');
 }
+
+export function printDate(d: Date): string {
+    const [ day, month, year ] = [d.getDate(), d.getMonth(), d.getFullYear()];
+    return [
+        padLeft(String(day), 2, '0'),
+        padLeft(String(month), 2, '0'),
+        padLeft(String(year), 4, '0'),
+    ].join('.');
+}

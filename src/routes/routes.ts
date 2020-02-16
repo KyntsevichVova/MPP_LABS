@@ -4,7 +4,7 @@ import { createWriteStream, existsSync } from 'fs';
 import { basename, join, normalize } from 'path';
 import { Connection } from '../lib/connection';
 import { STATUS, UPLOADS_DIR } from '../lib/constants';
-import { parseDate } from '../lib/utils';
+import { parseDate, printDate } from '../lib/utils';
 
 type RequestHandler = (req: Request, res: Response) => void;
 
@@ -22,8 +22,15 @@ export function handleEdit(con: Connection): RequestHandler {
                     if (error || result.rows.length < 1) {
                         res.redirect('/');
                     } else {
+                        const row = result.rows[0];
                         res.render('edit', {
-                            task: result.rows[0]
+                            task: {
+                                task_id: row.task_id,
+                                task_text: row.task_text,
+                                task_status: row.task_status,
+                                created_at: row.created_at,
+                                estimated_end_at: printDate(new Date(row.estimated_end_at))
+                            }
                         });
                     }
                 }

@@ -98,7 +98,7 @@ export function handleAdd(): RequestHandler {
 
 export function handleSubmitTask(con: Connection): RequestHandler {
     return (req, res) => {
-        const submit_type = req.query.type ? SUBMIT_TYPE[req.query.type] : null;
+        const submit_type = req.query.type ? SUBMIT_TYPE[req.query.type.toUpperCase()] : null;
 
         if (!submit_type) {
             res.redirect('/');
@@ -133,7 +133,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     `UPDATE TASK SET
                         TASK_TEXT = ${task_text},
                         TASK_STATUS = ${status},
-                        ESTIMATED_END_AT = ${end_at}
+                        ESTIMATED_END_AT = ${end_at},
                         FILE_ID = COALESCE(${file_id}, FILE_ID)
                     WHERE 
                         TASK_ID = ${task_id} AND (TASK_ID > 0)`,

@@ -25,7 +25,11 @@ export function handleEdit(con: Connection): RequestHandler {
                         res.redirect('/');
                     } else {
                         const row = result.rows[0];
-                        res.render('edit', {
+                        res.render('task_form', {
+                            page: {
+                                title: 'Edit task',
+                                formAction: `/submit?type=edit&id=${row.task_id}`
+                            },
                             task: {
                                 task_id: row.task_id,
                                 task_text: row.task_text,
@@ -78,7 +82,19 @@ export function handleIndex(con: Connection): RequestHandler {
 
 export function handleAdd(): RequestHandler {
     return (req, res) => {
-        res.render('add');
+        res.render('task_form', {
+            page: {
+                title: 'Add task',
+                formAction: '/submit_task?type=add'
+            },
+            task: {
+                task_id: '',
+                task_text: '',
+                task_status: STATUS.OPENED.value,
+                created_at: '',
+                estimated_end_at: ''
+            }
+        });
     }
 }
 
@@ -149,7 +165,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     RETURNING
                         TASK_ID`,
                     (error, result) => {
-                        if (error) {
+                        if (error || result.rows.length < 1) {
                             //TODO: add rendering with error messages
                             throw error;
                         } else {

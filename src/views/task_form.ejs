@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Edit task</title>
+        <title><%= page.title %></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" 
@@ -11,7 +11,7 @@
     </head>
     <body>
         <%- include("partial/navbar.ejs") %>
-        <form method="POST" action="/submit_task?id=<%= task.TASK_ID %>" enctype="multipart/form-data">
+        <form method="POST" action="<%= page.formAction %>" enctype="multipart/form-data">
             <label for="task">Task:</label>
             <textarea id="task" maxlength="250" name="task_text"><%= task.task_text %></textarea>
             

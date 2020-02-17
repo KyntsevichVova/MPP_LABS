@@ -40,7 +40,7 @@ export function parseDate(s: string): string {
 }
 
 export function printDate(d: Date): string {
-    const [ day, month, year ] = [d.getDate(), d.getMonth(), d.getFullYear()];
+    const [ day, month, year ] = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
     return [
         padLeft(String(day), 2, '0'),
         padLeft(String(month), 2, '0'),

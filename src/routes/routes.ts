@@ -31,7 +31,6 @@ export function handleEdit(con: Connection): RequestHandler {
                                 formAction: `/submit?type=edit&id=${row.task_id}`
                             },
                             task: {
-                                task_id: row.task_id,
                                 task_text: row.task_text,
                                 task_status: row.task_status,
                                 created_at: row.created_at,
@@ -88,7 +87,6 @@ export function handleAdd(): RequestHandler {
                 formAction: '/submit_task?type=add'
             },
             task: {
-                task_id: '',
                 task_text: '',
                 task_status: STATUS.OPENED.value,
                 created_at: '',

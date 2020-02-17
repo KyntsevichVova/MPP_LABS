@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { createWriteStream, existsSync } from 'fs';
 import { basename, join, normalize } from 'path';
 import { Connection } from '../lib/connection';
-import { STATUS, UPLOADS_DIR } from '../lib/constants';
+import { STATUS, SUBMIT_ENDPOINT, SUBMIT_TYPE, UPLOADS_DIR } from '../lib/constants';
 import { parseDate, printDate } from '../lib/utils';
 
 type RequestHandler = (req: Request, res: Response) => void;
@@ -28,7 +28,7 @@ export function handleEdit(con: Connection): RequestHandler {
                         res.render('task_form', {
                             page: {
                                 title: 'Edit task',
-                                formAction: `/submit?type=edit&id=${row.task_id}`
+                                formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.EDIT}&id=${row.task_id}`
                             },
                             task: {
                                 task_text: row.task_text,
@@ -84,7 +84,7 @@ export function handleAdd(): RequestHandler {
         res.render('task_form', {
             page: {
                 title: 'Add task',
-                formAction: '/submit_task?type=add'
+                formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.ADD}`
             },
             task: {
                 task_text: '',
@@ -98,6 +98,13 @@ export function handleAdd(): RequestHandler {
 
 export function handleSubmitTask(con: Connection): RequestHandler {
     return (req, res) => {
+        const submit_type = req.query.type ? SUBMIT_TYPE[req.query.type] : null;
+
+        if (!submit_type) {
+            res.redirect('/');
+            return;
+        }
+
         const body = {
             task_text: null,
             status: null, 

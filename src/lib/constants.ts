@@ -1,16 +1,23 @@
 export const STATUS = {
     OPENED: {
-        text: "Opened",
-        value: "OPENED"
+        text: 'Opened',
+        value: 'OPENED'
     },
     INPROGRESS: {
-        text: "In progress",
-        value: "INPROGRESS"
+        text: 'In progress',
+        value: 'INPROGRESS'
     },
     CLOSED: {
-        text: "Closed",
-        value: "CLOSED"
+        text: 'Closed',
+        value: 'CLOSED'
     }
 };
 
-export const UPLOADS_DIR = "uploads";
+export const UPLOADS_DIR = 'uploads';
+
+export enum SUBMIT_TYPE {
+    ADD = 'add',
+    EDIT = 'edit'
+};
+
+export const SUBMIT_ENDPOINT = 'submit_task';

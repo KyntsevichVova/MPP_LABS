@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import express from 'express';
 import { join } from 'path';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
+import { SUBMIT_ENDPOINT } from './lib/constants';
 import { handleAdd, handleDownload, handleEdit, handleIndex, handleSubmitTask } from './routes/routes';
 
 config();
@@ -25,6 +26,6 @@ app.get('/', handleIndex(con));
 app.get('/add', handleAdd());
 app.get('/edit', handleEdit(con));
 app.get('/download', handleDownload(con));
-app.post('/submit_task', handleSubmitTask(con));
+app.post(`/${SUBMIT_ENDPOINT}`, handleSubmitTask(con));
 
 app.listen(3000);

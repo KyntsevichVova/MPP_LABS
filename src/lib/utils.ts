@@ -47,3 +47,7 @@ export function printDate(d: Date): string {
         padLeft(String(year), 4, '0'),
     ].join('.');
 }
+
+export function restrictString(s: string, maxlen: number): string {
+    return s.substr(0, Math.min(s.length, maxlen));
+}

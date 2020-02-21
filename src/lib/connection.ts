@@ -1,9 +1,18 @@
 import mysql from 'mysql';
 import { Client } from 'pg';
 
+interface QueryResult {
+    rows: Array<any>
+}
+
+type QueryCallback = (error: Error, result: QueryResult) => void;
+
 export interface Connection {
-    connect();
-    query(sql: string, callback: (error, result) => void, params?: Array<any>): void;
+    connect(): void;
+
+    query(sql: string, callback: QueryCallback): void;
+    query(sql: string, params: Array<any>, callback: QueryCallback): void;
+
     escape(s: string): string;
 }
 
@@ -29,8 +38,13 @@ export class MySQLConnection implements Connection {
         });
     }
 
-    query(sql: string, callback: (error, result) => void): void {
-        this.con.query(sql, callback);
+    query(sql: string, params: any, callback?: QueryCallback): void {
+        if ((typeof params === 'function') && !callback) {
+            callback = params;
+            this.con.query(sql, callback);
+        } else {
+            this.con.query(sql, params, callback);   
+        }
     };
 
     escape(s: string): string {
@@ -54,9 +68,14 @@ export class PostgreSQLConnection implements Connection {
         });
     }
 
-    query(sql: string, callback: (error, result) => void, params: Array<any>): void {
-        this.client.query(sql, params, callback);
-    }
+    query(sql: string, params: any, callback?: QueryCallback): void {
+        if ((typeof params === 'function') && !callback) {
+            callback = params;
+            this.client.query(sql, callback);
+        } else {
+            this.client.query(sql, params, callback);   
+        }
+    };
 
     escape(s: string): string {
         return this.client.escapeLiteral(s);

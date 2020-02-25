@@ -17,12 +17,16 @@ export function handleDownload(con: Connection): RequestHandler {
                     (error, result) => {
                         if (!error && result.rows.length >= 1) {
                             res.download(filename, result.rows[0].file_name);
-                            return;
+                        } else {
+                            res.status(404).end();
                         }
                     }
                 );
+            } else {
+                res.status(404).end();
             }
+        } else {
+            res.status(404).end();
         }
-        res.status(404).end();
     }
 }

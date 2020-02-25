@@ -1,17 +1,21 @@
 import { Connection } from '../../lib/connection';
-import { STATUS } from '../../lib/constants';
+import { DEFAULT_FILTER, STATUS } from '../../lib/constants';
 import { printDate } from '../../lib/utils';
 import { RequestHandler } from '../routes';
 
 export function handleIndex(con: Connection): RequestHandler {
     return (req, res) => {
-        const filter = req.query.filter ? con.escape(req.query.filter) : null;
+        const filters = String(req.query.filter ?? DEFAULT_FILTER)
+            .split(',')
+            .map((filter) => con.escape(filter.toUpperCase()))
+            .join(', ');
+        
         con.query(
             `SELECT * FROM TASK
             WHERE
                 (TASK_ID > 0)
             AND
-                (TASK_STATUS LIKE COALESCE(${filter}, '%'))`, 
+                (TASK_STATUS IN (${filters}))`,
             (error, result) => {
                 if (error || result.rows.length < 1) {
                     res.render('index', {

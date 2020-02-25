@@ -13,6 +13,8 @@ export const STATUS = {
     }
 };
 
+export const DEFAULT_FILTER = Object.entries(STATUS).map(([key, value]) => value.value);
+
 export const UPLOADS_DIR = 'uploads';
 
 export enum SUBMIT_TYPE {

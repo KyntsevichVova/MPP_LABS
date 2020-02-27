@@ -23,5 +23,7 @@ export enum SUBMIT_TYPE {
 };
 
 export const SUBMIT_ENDPOINT = 'submit_task';
+export const ADD_ENDPOINT = `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.ADD}`;
+export const EDIT_ENDPOINT = `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.EDIT}`;
 
 export const MAX_TASK_TEXT_LENGTH = 250;

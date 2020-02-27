@@ -10,7 +10,7 @@
             crossorigin="anonymous">
     </head>
     <body>
-        <%- include("partial/navbar.ejs") %>
+        <%- include("partial/navbar.ejs", { ADD_ENDPOINT: ADD_ENDPOINT }) %>
         <form method="POST" action="<%= page.formAction %>" enctype="multipart/form-data">
             <label for="task">Task:</label>
             <textarea id="task" maxlength="250" name="task_text"><%= task.task_text %></textarea>

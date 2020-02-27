@@ -2,7 +2,7 @@ import Busboy from 'busboy';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { Connection } from '../../lib/connection';
-import { MAX_TASK_TEXT_LENGTH, STATUS, SUBMIT_ENDPOINT, SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
+import { ADD_ENDPOINT, MAX_TASK_TEXT_LENGTH, STATUS, SUBMIT_ENDPOINT, SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
 import { parseDate } from '../../lib/utils';
 import { RequestHandler } from '../routes';
 
@@ -56,28 +56,18 @@ export function handleSubmitTask(con: Connection): RequestHandler {
 
         const processSubmit = (body: Task) => {
             const { task, errors } = validate(body);
-            const task_id = Number.parseInt(req.query.id, 10);
+            const task_id = Number.parseInt(req.query.task_id, 10);
             
             if (errors) {
-                if (submit_type === SUBMIT_TYPE.EDIT) {
-                    res.render('task_form', {
-                        page: {
-                            title: 'Edit task',
-                            formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.EDIT}&id=${task_id}`
-                        },
-                        task, 
-                        errors
-                    });
-                } else {
-                    res.render('task_form', {
-                        page: {
-                            title: 'Add task',
-                            formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.ADD}`
-                        },
-                        task, 
-                        errors
-                    });
-                }
+                res.render('task_form', {
+                    page: {
+                        title: `${(submit_type === SUBMIT_TYPE.EDIT) ? 'Edit' : 'Add'} task`,
+                        formAction: `/${SUBMIT_ENDPOINT}?type=${submit_type}&task_id=${task_id}`
+                    },
+                    task: body,
+                    errors,
+                    ADD_ENDPOINT: ADD_ENDPOINT
+                });
                 return;
             }
 

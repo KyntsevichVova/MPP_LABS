@@ -1,5 +1,5 @@
 import { Connection } from '../../lib/connection';
-import { DEFAULT_FILTER, STATUS } from '../../lib/constants';
+import { ADD_ENDPOINT, DEFAULT_FILTER, EDIT_ENDPOINT, STATUS } from '../../lib/constants';
 import { printDate } from '../../lib/utils';
 import { RequestHandler } from '../routes';
 
@@ -36,7 +36,9 @@ export function handleIndex(con: Connection): RequestHandler {
                         }
                     });
                     res.render('index', {
-                        tasks: tasks
+                        tasks: tasks,
+                        ADD_ENDPOINT,
+                        EDIT_ENDPOINT
                     });
                 }
             }

@@ -10,7 +10,7 @@
             crossorigin="anonymous">
     </head>
     <body class="h-100">
-        <%- include("partial/navbar.ejs") %>
+        <%- include("partial/navbar.ejs", { ADD_ENDPOINT: ADD_ENDPOINT }) %>
         <div class="container-fluid">
             <div class="row">
                 <% for (let i = 0; i < tasks.length; i++) { %>
@@ -21,7 +21,7 @@
                                 <h6 class="card-subtitle">Status: <%= tasks[i].task_status %></h6>
                                 <h6 class="card-subtitle my-2 <%= tasks[i].dl ? 'text-danger' : '' %>">End at: <%= tasks[i].estimated_end_at %> </h6>
                                 <p class="card-text my-3"><%= tasks[i].task_text %></p>
-                                <a href="/edit?id=<%= tasks[i].task_id %>" class="btn btn-primary mr-1">Edit</a>
+                                <a href="<%= EDIT_ENDPOINT %>&task_id=<%= tasks[i].task_id %>" class="btn btn-primary mr-1">Edit</a>
                                 <% if (tasks[i].file_id) { %>
                                     <a href="/download?file_id=<%= tasks[i].file_id %>" class="btn btn-info ml-1">Attachment</a>
                                 <% } %>

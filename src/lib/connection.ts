@@ -45,7 +45,7 @@ export class MySQLConnection implements Connection {
         } else {
             this.con.query(sql, params, callback);   
         }
-    };
+    }
 
     escape(s: string): string {
         return this.con.escape(s);

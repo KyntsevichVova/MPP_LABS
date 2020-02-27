@@ -6,6 +6,45 @@ import { MAX_TASK_TEXT_LENGTH, STATUS, SUBMIT_ENDPOINT, SUBMIT_TYPE, UPLOADS_DIR
 import { parseDate } from '../../lib/utils';
 import { RequestHandler } from '../routes';
 
+interface Task {
+    task_text?: string,
+    task_status?: string,
+    estimated_end_at?: string,
+    file_id?: string
+}
+
+interface ValidationError {
+    text_short?: boolean,
+    text_long?: boolean,
+    estimated_end_at?: boolean,
+    status_present?: boolean
+}
+
+interface ValidatedTask {
+    task: Task,
+    errors: ValidationError | undefined
+}
+
+function validate(body: Task): ValidatedTask {
+    const task: Task = {
+        task_text: body.task_text ?? '',
+        task_status: body.task_status ? STATUS[body.task_status]?.value : null,
+        estimated_end_at: parseDate(body.estimated_end_at),
+        file_id: body.file_id
+    };
+    const errors = {
+        text_short: !!(!task.task_text || task.task_text.length < 1),
+        text_long: !!(task.task_text?.length >= MAX_TASK_TEXT_LENGTH),
+        estimated_end_at: !!(task.estimated_end_at),
+        status_present: !!task.task_status
+    };
+    const errorPresent = errors.text_short && errors.text_long && errors.estimated_end_at && errors.status_present;
+    return {
+        task,
+        errors: errorPresent ? errors : undefined
+    };
+}
+
 export function handleSubmitTask(con: Connection): RequestHandler {
     return (req, res) => {
         const submit_type = req.query.type ? SUBMIT_TYPE[req.query.type.toUpperCase()] : null;
@@ -15,34 +54,19 @@ export function handleSubmitTask(con: Connection): RequestHandler {
             return;
         }
 
-        const body = {
-            task_text: null,
-            task_status: null, 
-            estimated_end_at: null,
-            file_id: null
-        };
-
-        const processSubmit = () => {
-            const task_text = body.task_text ?? '';
-            const task_status = body.task_status ? STATUS[body.task_status]?.value : null;
-            const estimated_end_at = parseDate(body.estimated_end_at);
-            const file_id = body.file_id;
+        const processSubmit = (body: Task) => {
+            const { task, errors } = validate(body);
             const task_id = Number.parseInt(req.query.id, 10);
             
-            if (!task_text || task_text.length >= MAX_TASK_TEXT_LENGTH || !task_status || !estimated_end_at) {
-                const errors = {
-                    text_short: !!(!task_text || task_text.length < 1),
-                    text_long: !!(task_text?.length >= MAX_TASK_TEXT_LENGTH),
-                    estimated_end_at: !!(estimated_end_at)
-                };
+            if (errors) {
                 if (submit_type === SUBMIT_TYPE.EDIT) {
                     res.render('task_form', {
                         page: {
                             title: 'Edit task',
                             formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.EDIT}&id=${task_id}`
                         },
-                        task: body,
-                        errors: errors
+                        task, 
+                        errors
                     });
                 } else {
                     res.render('task_form', {
@@ -50,8 +74,8 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                             title: 'Add task',
                             formAction: `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.ADD}`
                         },
-                        task: body,
-                        errors: errors
+                        task, 
+                        errors
                     });
                 }
                 return;
@@ -64,12 +88,13 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                 }
                 con.query(
                     `UPDATE TASK SET
-                        TASK_TEXT = ${con.escape(task_text)},
-                        TASK_STATUS = ${con.escape(task_status)},
-                        ESTIMATED_END_AT = ${con.escape(estimated_end_at)},
-                        FILE_ID = COALESCE(${file_id}, FILE_ID)
+                        TASK_TEXT = $1,
+                        TASK_STATUS = $2,
+                        ESTIMATED_END_AT = $3,
+                        FILE_ID = COALESCE($4, FILE_ID)
                     WHERE 
                         TASK_ID = ${task_id} AND (TASK_ID > 0)`,
+                    [task.task_text, task.task_status, task.estimated_end_at, task.file_id],
                     (error, result) => {
                         if (error) {
                             //TODO: add rendering with error messages
@@ -77,11 +102,12 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                         } else {
                             con.query(
                                 `UPDATE TASK_FILE SET
-                                    TASK_ID = ${task_id}
+                                    TASK_ID = $1
                                 WHERE
-                                    FILE_ID = ${file_id}
+                                    FILE_ID = $2
                                 AND
                                     TASK_ID = -1`,
+                                [task_id, task.file_id],
                                 (error, result) => {
                                     if (error) {
                                         //TODO: add rendering with error messages
@@ -99,9 +125,10 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     `INSERT INTO TASK
                         (TASK_TEXT, TASK_STATUS, CREATED_AT, ESTIMATED_END_AT, FILE_ID)
                     VALUES
-                        (${con.escape(task_text)}, ${con.escape(task_status)}, CURRENT_DATE, ${con.escape(estimated_end_at)}, ${file_id})
+                        ($1, $2, CURRENT_DATE, $3, $4)
                     RETURNING
                         TASK_ID`,
+                    [task.task_text, task.task_status, task.estimated_end_at, task.file_id],
                     (error, result) => {
                         if (error || result.rows.length < 1) {
                             //TODO: add rendering with error messages
@@ -112,9 +139,10 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                                 `UPDATE TASK_FILE SET
                                     TASK_ID = ${task_id}
                                 WHERE
-                                    FILE_ID = ${file_id}
+                                    FILE_ID = $1
                                 AND
                                     TASK_ID = -1`,
+                                [task.file_id],
                                 (error, result) => {
                                     if (error) {
                                         //TODO: add rendering with error messages
@@ -130,6 +158,8 @@ export function handleSubmitTask(con: Connection): RequestHandler {
             }
         }
 
+        const fields: Array<Promise<any>> = [];
+
         const busboy = new Busboy({
             headers: req.headers,
             limits: {
@@ -142,31 +172,49 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                 file.resume();
                 return;
             }
-            con.query(
-                `INSERT INTO TASK_FILE
-                    (TASK_ID, FILE_NAME)
-                VALUES
-                    (-1, ${con.escape(filename)})
-                RETURNING
-                    file_id`,
-                (error, result) => {
-                    if (error) {
-                        throw error;
-                    } else {
-                        body.file_id = result.rows[0].file_id;
-                        const saveTo = join(process.cwd(), UPLOADS_DIR, `${body.file_id}`);
-                        file.pipe(createWriteStream(saveTo));
+            
+            fields.push(new Promise((resolve, reject) => {
+                con.query(
+                    `INSERT INTO TASK_FILE
+                        (TASK_ID, FILE_NAME)
+                    VALUES
+                        (-1, $1)
+                    RETURNING
+                        file_id`,
+                    [filename],
+                    (error, result) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            const file_id = result.rows[0].file_id;
+                            const saveTo = join(process.cwd(), UPLOADS_DIR, `${file_id}`);
+                            file.pipe(createWriteStream(saveTo));
+                            resolve({ file_id: file_id });
+                        }
                     }
-                }
-            );
+                );
+            }));
         });
 
         busboy.on('field', (fieldname, val) => {
-            body[fieldname] = val;
+            fields.push(new Promise((resolve) => {
+                resolve({ [fieldname]: val });
+            }));
         });
 
         busboy.on('finish', () => {
-            processSubmit();
+            Promise.all(fields).then((value) => {
+                let body = {};
+                value.forEach((field) => {
+                    body = {
+                        ...body,
+                        ...field
+                    };
+                });
+                processSubmit(body);
+            }).catch((reason) => {
+                console.log(reason);
+            });
         });
 
         req.pipe(busboy);

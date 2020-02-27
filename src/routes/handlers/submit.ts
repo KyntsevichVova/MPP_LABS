@@ -33,12 +33,12 @@ function validate(body: Task): ValidatedTask {
         file_id: body.file_id
     };
     const errors = {
-        text_short: !!(!task.task_text || task.task_text.length < 1),
-        text_long: !!(task.task_text?.length >= MAX_TASK_TEXT_LENGTH),
-        estimated_end_at: !!(task.estimated_end_at),
-        status_present: !!task.task_status
+        text_short: !task.task_text || task.task_text.length < 1,
+        text_long: task.task_text?.length >= MAX_TASK_TEXT_LENGTH,
+        estimated_end_at: !task.estimated_end_at,
+        status_present: !task.task_status
     };
-    const errorPresent = errors.text_short && errors.text_long && errors.estimated_end_at && errors.status_present;
+    const errorPresent = errors.text_short || errors.text_long || errors.estimated_end_at || errors.status_present;
     return {
         task,
         errors: errorPresent ? errors : undefined
@@ -172,7 +172,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                 file.resume();
                 return;
             }
-            
+
             fields.push(new Promise((resolve, reject) => {
                 con.query(
                     `INSERT INTO TASK_FILE

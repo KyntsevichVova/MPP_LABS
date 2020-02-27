@@ -15,7 +15,9 @@ export function handleIndex(con: Connection): RequestHandler {
             WHERE
                 (TASK_ID > 0)
             AND
-                (TASK_STATUS IN (${filters}))`,
+                (TASK_STATUS IN (${filters}))
+            ORDER BY 
+                CREATED_AT DESC`,
             (error, result) => {
                 if (error || result.rows.length < 1) {
                     res.render('index', {

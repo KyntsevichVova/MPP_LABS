@@ -26,7 +26,7 @@ INSERT INTO TASK VALUES (
     -1,
     'dummy task',
     '',
-    CURRENT_DATE,
+    NOW(),
     CURRENT_DATE,
     NULL
 );

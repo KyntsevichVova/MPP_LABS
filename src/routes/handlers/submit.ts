@@ -115,7 +115,7 @@ export function handleSubmitTask(con: Connection): RequestHandler {
                     `INSERT INTO TASK
                         (TASK_TEXT, TASK_STATUS, CREATED_AT, ESTIMATED_END_AT, FILE_ID)
                     VALUES
-                        ($1, $2, CURRENT_DATE, $3, $4)
+                        ($1, $2, NOW(), $3, $4)
                     RETURNING
                         TASK_ID`,
                     [task.task_text, task.task_status, task.estimated_end_at, task.file_id],

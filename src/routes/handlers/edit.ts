@@ -1,6 +1,6 @@
 import { Connection } from '../../lib/connection';
-import { ADD_ENDPOINT, EDIT_ENDPOINT } from '../../lib/constants';
-import { printDate } from '../../lib/utils';
+import { SUBMIT_TYPE } from '../../lib/constants';
+import { Model } from '../../lib/model';
 import { RequestHandler } from '../routes';
 
 export function handleEdit(con: Connection): RequestHandler {
@@ -20,20 +20,7 @@ export function handleEdit(con: Connection): RequestHandler {
                     if (error || result.rows.length < 1) {
                         res.redirect('/');
                     } else {
-                        const row = result.rows[0];
-                        res.render('task_form', {
-                            page: {
-                                title: 'Edit task',
-                                formAction: `${EDIT_ENDPOINT}&task_id=${row.task_id}`
-                            },
-                            task: {
-                                task_text: row.task_text,
-                                task_status: row.task_status,
-                                created_at: row.created_at,
-                                estimated_end_at: printDate(new Date(row.estimated_end_at))
-                            },
-                            ADD_ENDPOINT: ADD_ENDPOINT
-                        });
+                        res.render('task_form', new Model(result.rows.map(Model.createTask), task_id, SUBMIT_TYPE.EDIT));
                     }
                 }
             );

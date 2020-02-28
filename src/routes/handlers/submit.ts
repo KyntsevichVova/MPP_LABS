@@ -2,48 +2,9 @@ import Busboy from 'busboy';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { Connection } from '../../lib/connection';
-import { ADD_ENDPOINT, MAX_TASK_TEXT_LENGTH, STATUS, SUBMIT_ENDPOINT, SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
-import { parseDate } from '../../lib/utils';
+import { SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
+import { Model, Task } from '../../lib/model';
 import { RequestHandler } from '../routes';
-
-interface Task {
-    task_text?: string,
-    task_status?: string,
-    estimated_end_at?: string,
-    file_id?: string
-}
-
-interface ValidationError {
-    text_short?: boolean,
-    text_long?: boolean,
-    estimated_end_at?: boolean,
-    status_present?: boolean
-}
-
-interface ValidatedTask {
-    task: Task,
-    errors: ValidationError | undefined
-}
-
-function validate(body: Task): ValidatedTask {
-    const task: Task = {
-        task_text: body.task_text ?? '',
-        task_status: body.task_status ? STATUS[body.task_status]?.value : null,
-        estimated_end_at: parseDate(body.estimated_end_at),
-        file_id: body.file_id
-    };
-    const errors = {
-        text_short: !task.task_text || task.task_text.length < 1,
-        text_long: task.task_text?.length >= MAX_TASK_TEXT_LENGTH,
-        estimated_end_at: !task.estimated_end_at,
-        status_present: !task.task_status
-    };
-    const errorPresent = errors.text_short || errors.text_long || errors.estimated_end_at || errors.status_present;
-    return {
-        task,
-        errors: errorPresent ? errors : undefined
-    };
-}
 
 export function handleSubmitTask(con: Connection): RequestHandler {
     return (req, res) => {
@@ -55,19 +16,11 @@ export function handleSubmitTask(con: Connection): RequestHandler {
         }
 
         const processSubmit = (body: Task) => {
-            const { task, errors } = validate(body);
+            const { task, errors } = Model.validateTask(body);
             const task_id = Number.parseInt(req.query.task_id, 10);
             
             if (errors) {
-                res.render('task_form', {
-                    page: {
-                        title: `${(submit_type === SUBMIT_TYPE.EDIT) ? 'Edit' : 'Add'} task`,
-                        formAction: `/${SUBMIT_ENDPOINT}?type=${submit_type}&task_id=${task_id}`
-                    },
-                    task: body,
-                    errors,
-                    ADD_ENDPOINT: ADD_ENDPOINT
-                });
+                res.render('task_form', new Model([body], task_id, submit_type, errors));
                 return;
             }
 

@@ -1,6 +1,6 @@
 import { Connection } from '../../lib/connection';
-import { ADD_ENDPOINT, DEFAULT_FILTER, EDIT_ENDPOINT, STATUS } from '../../lib/constants';
-import { printDate } from '../../lib/utils';
+import { DEFAULT_FILTER } from '../../lib/constants';
+import { Model } from '../../lib/model';
 import { RequestHandler } from '../routes';
 
 export function handleIndex(con: Connection): RequestHandler {
@@ -20,26 +20,10 @@ export function handleIndex(con: Connection): RequestHandler {
                 CREATED_AT DESC`,
             (error, result) => {
                 if (error || result.rows.length < 1) {
-                    res.render('index', {
-                        tasks: []
-                    });
+                    res.render('index', new Model());
                 } else {
-                    let tasks: Array<any> = result.rows.map((value) => {
-                        return {
-                            task_id: value.task_id,
-                            task_text: value.task_text,
-                            task_status: STATUS[value.task_status].text,
-                            created_at: value.created_at,
-                            estimated_end_at: printDate(new Date(value.estimated_end_at)),
-                            dl: (new Date() >= new Date(value.estimated_end_at)),
-                            file_id: value.file_id
-                        }
-                    });
-                    res.render('index', {
-                        tasks: tasks,
-                        ADD_ENDPOINT,
-                        EDIT_ENDPOINT
-                    });
+                    const tasks: Array<any> = result.rows.map(Model.createTask);
+                    res.render('index', new Model(tasks));
                 }
             }
         );

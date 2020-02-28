@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="h-100">
     <head>
-        <title>Task Manager</title>
+        <title><%= page.title %></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" 
@@ -10,7 +10,9 @@
             crossorigin="anonymous">
     </head>
     <body class="h-100">
-        <%- include("partial/navbar.ejs", { ADD_ENDPOINT: ADD_ENDPOINT }) %>
+        
+        <%- include("partial/navbar.ejs", { ADD_ENDPOINT: endpoints.ADD_ENDPOINT }) %>
+
         <div class="container-fluid">
             <div class="row">
                 <% for (let i = 0; i < tasks.length; i++) { %>
@@ -18,12 +20,30 @@
                         <div class="card my-3 bg-light">
                             <div class="card-header">Task</div>
                             <div class="card-body">
-                                <h6 class="card-subtitle">Status: <%= tasks[i].task_status %></h6>
-                                <h6 class="card-subtitle my-2 <%= tasks[i].dl ? 'text-danger' : '' %>">End at: <%= tasks[i].estimated_end_at %> </h6>
+                                <h6 class="card-subtitle">
+                                    Status: <%= tasks[i].task_status %>
+                                </h6>
+                                
+                                <h6 class="card-subtitle my-2 <%= tasks[i].deadline ? 'text-danger' : '' %>">
+                                    End at: <%= tasks[i].estimated_end_at %>
+                                </h6>
+                                
                                 <p class="card-text my-3"><%= tasks[i].task_text %></p>
-                                <a href="<%= EDIT_ENDPOINT %>&task_id=<%= tasks[i].task_id %>" class="btn btn-primary mr-1">Edit</a>
+                                
+                                <a 
+                                    href="<%= endpoints.EDIT_ENDPOINT %>&task_id=<%= tasks[i].task_id %>" 
+                                    class="btn btn-primary mr-1"
+                                >
+                                    Edit
+                                </a>
+                                
                                 <% if (tasks[i].file_id) { %>
-                                    <a href="/download?file_id=<%= tasks[i].file_id %>" class="btn btn-info ml-1">Attachment</a>
+                                    <a 
+                                        href="/download?file_id=<%= tasks[i].file_id %>" 
+                                        class="btn btn-info ml-1"
+                                    >
+                                        Attachment
+                                    </a>
                                 <% } %>
                             </div>
                         </div>

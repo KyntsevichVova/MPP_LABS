@@ -1,20 +1,14 @@
-import { ADD_ENDPOINT, STATUS } from '../../lib/constants';
+import { STATUS, SUBMIT_TYPE } from '../../lib/constants';
+import { Model } from '../../lib/model';
 import { RequestHandler } from '../routes';
 
 export function handleAdd(): RequestHandler {
     return (req, res) => {
-        res.render('task_form', {
-            page: {
-                title: 'Add task',
-                formAction: `${ADD_ENDPOINT}&task_id=0`
-            },
-            task: {
-                task_text: '',
-                task_status: STATUS.OPENED.value,
-                created_at: '',
-                estimated_end_at: ''
-            },
-            ADD_ENDPOINT: ADD_ENDPOINT
-        });
+        res.render('task_form', new Model([{
+            task_text: '',
+            task_status: STATUS.OPENED.value,
+            created_at: '',
+            estimated_end_at: ''
+        }], 0, SUBMIT_TYPE.ADD));
     }
 }

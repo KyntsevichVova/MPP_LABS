@@ -5,6 +5,7 @@ import { join } from 'path';
 import { Connection } from '../../lib/connection';
 import { SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
 import { InputTask, Model } from '../../lib/model';
+import { parseDate } from '../../lib/utils';
 import { RequestHandler } from '../routes';
 
 const processSubmit = (body: InputTask, con: Connection, req: Request, res: Response) => {
@@ -19,6 +20,7 @@ const processSubmit = (body: InputTask, con: Connection, req: Request, res: Resp
     const task_id = Number.parseInt(req.query.task_id, 10);
     
     if (errors) {
+        body.estimated_end_at = parseDate(body.estimated_end_at);
         res.render('task_form', new Model([Model.createTask(body)], task_id, submit_type, errors));
         return;
     }

@@ -9,6 +9,7 @@ services:
         restart: always
         ports:
             - "3000:3000"
+        command: "node build/src/index.js"
         container_name: "app_backend_${LAB}"
     postgres:
         image: postgres:12

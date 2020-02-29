@@ -22,8 +22,7 @@ export function handleIndex(con: Connection): RequestHandler {
                 if (error || result.rows.length < 1) {
                     res.render('index', new Model());
                 } else {
-                    const tasks: Array<any> = result.rows.map(Model.createTask);
-                    res.render('index', new Model(tasks));
+                    res.render('index', new Model(result.rows.map(Model.createTask)));
                 }
             }
         );

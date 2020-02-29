@@ -1,3 +1,8 @@
+export interface Status {
+    text: string,
+    value: string
+}
+
 export const STATUS = {
     OPENED: {
         text: 'Opened',

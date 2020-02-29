@@ -4,8 +4,8 @@ const pt = require('path');
 const args = process.argv.slice(2);
 
 for (let i = 0; i < args.length; i += 2) {
-    const src = pt.join(__dirname, '..', pt.sep, args[i]);
-    const dest = pt.join(__dirname, '..', pt.sep, args[i + 1]);
+    const src = pt.join(__dirname, '..', args[i]);
+    const dest = pt.join(__dirname, '..', args[i + 1]);
     copy(src, dest);
 }
 

@@ -1,6 +1,6 @@
 import { SUBMIT_TYPE } from '../../lib/constants';
 import { Model } from '../../lib/model';
-import { RequestHandler } from '../routes';
+import { RequestHandler } from '../../lib/types';
 
 export function handleAdd(): RequestHandler {
     return (req, res) => {

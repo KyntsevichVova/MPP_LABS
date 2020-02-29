@@ -1,5 +1,5 @@
 import { Connection } from '../../lib/connection';
-import { RequestHandler } from '../routes';
+import { RequestHandler } from '../../lib/types';
 import { handleAdd } from './add';
 import { handleEdit } from './edit';
 

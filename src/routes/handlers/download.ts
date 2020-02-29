@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { Connection } from '../../lib/connection';
 import { UPLOADS_DIR } from '../../lib/constants';
-import { RequestHandler } from '../routes';
+import { RequestHandler } from '../../lib/types';
 
 export function handleDownload(con: Connection): RequestHandler {
     return (req, res) => {

@@ -1,7 +1,7 @@
 import { Connection } from '../../lib/connection';
 import { SUBMIT_TYPE } from '../../lib/constants';
 import { Model } from '../../lib/model';
-import { RequestHandler } from '../routes';
+import { RequestHandler } from '../../lib/types';
 
 export function handleEdit(con: Connection): RequestHandler {
     return (req, res) => {

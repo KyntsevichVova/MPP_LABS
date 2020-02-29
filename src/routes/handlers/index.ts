@@ -1,7 +1,7 @@
 import { Connection } from '../../lib/connection';
 import { DEFAULT_FILTER } from '../../lib/constants';
 import { Model } from '../../lib/model';
-import { RequestHandler } from '../routes';
+import { RequestHandler } from '../../lib/types';
 
 export function handleIndex(con: Connection): RequestHandler {
     return (req, res) => {

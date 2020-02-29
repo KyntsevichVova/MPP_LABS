@@ -3,7 +3,7 @@ import express from 'express';
 import { join } from 'path';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
 import { SUBMIT_ENDPOINT } from './lib/constants';
-import { handleDownload, handleIndex, handleSubmitTask, handleTask } from './routes/routes';
+import { handleDownload, handleIndex, handleSubmitTask, handleTask } from './routes';
 
 config();
 

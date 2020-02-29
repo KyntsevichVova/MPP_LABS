@@ -5,8 +5,8 @@ import { join } from 'path';
 import { Connection } from '../../lib/connection';
 import { SUBMIT_TYPE, UPLOADS_DIR } from '../../lib/constants';
 import { InputTask, Model } from '../../lib/model';
+import { RequestHandler } from '../../lib/types';
 import { parseDate } from '../../lib/utils';
-import { RequestHandler } from '../routes';
 
 const processSubmit = (body: InputTask, con: Connection, req: Request, res: Response) => {
     const submit_type = req.query.type ? SUBMIT_TYPE[req.query.type.toUpperCase()] : null;

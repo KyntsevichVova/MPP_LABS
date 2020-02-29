@@ -1,9 +1,4 @@
-const months_in_year = 12;
-
-const days_in_month = [
-    [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-    [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-];
+import { days_in_month, months_in_year } from "./constants";
 
 export function isLeapYear(year: number): boolean {
     return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));

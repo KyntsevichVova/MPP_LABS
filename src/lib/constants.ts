@@ -32,3 +32,10 @@ export const ADD_ENDPOINT = `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.ADD}`;
 export const EDIT_ENDPOINT = `/${SUBMIT_ENDPOINT}?type=${SUBMIT_TYPE.EDIT}`;
 
 export const MAX_TASK_TEXT_LENGTH = 250;
+
+export const months_in_year = 12;
+
+export const days_in_month = [
+    [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+    [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+];

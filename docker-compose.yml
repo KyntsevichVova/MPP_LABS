@@ -2,7 +2,7 @@ version: "3.6"
 services: 
     app_backend:
         build:
-            context: ./app_backend
+            context: ./app-backend
         image: "mpp:${LAB}"
         depends_on: 
             - postgres

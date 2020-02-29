@@ -1,15 +1,15 @@
 version: "3.6"
 services: 
-    node:
+    app_backend:
         build:
-            context: ./app
+            context: ./app_backend
         image: "mpp:${LAB}"
         depends_on: 
             - postgres
         restart: always
         ports:
             - "3000:3000"
-        container_name: "mpp_node_${LAB}"
+        container_name: "app_backend_${LAB}"
     postgres:
         image: postgres:12
         volumes: 

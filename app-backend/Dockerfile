@@ -1,7 +1,7 @@
 FROM alpine:3 as base
 
 WORKDIR /app
-COPY ../../app-backend /app
+COPY . /app
 
 FROM node:13.8.0 as build
 

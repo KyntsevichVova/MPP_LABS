@@ -20,6 +20,7 @@ export interface ConnectionOptions {
     user?: string;
     password?: string;
     database?: string;
+    host?: string;
 }
 
 export class MySQLConnection implements Connection {

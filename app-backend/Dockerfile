@@ -19,3 +19,5 @@ COPY --from=build /app/build /app/build
 
 RUN npm install --only=production 
 RUN mkdir uploads
+
+ENV DB_HOST=postgres

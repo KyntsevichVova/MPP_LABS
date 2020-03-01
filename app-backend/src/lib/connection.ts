@@ -8,7 +8,7 @@ interface QueryResult {
 type QueryCallback = (error: Error, result: QueryResult) => void;
 
 export interface Connection {
-    connect(): void;
+    connect(): Promise<void>;
 
     query(sql: string, callback: QueryCallback): void;
     query(sql: string, params: Array<any>, callback: QueryCallback): void;
@@ -31,11 +31,15 @@ export class MySQLConnection implements Connection {
     }
 
     connect() {
-        this.con.connect((err) => {
-            if (err) {
-                console.log('Cannot connect to MySQL');
-                throw err;
-            }
+        return new Promise<void>((resolve, reject) => {
+            this.con.connect((err) => {
+                if (err) {
+                    console.log('Cannot connect to MySQL');
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 
@@ -61,11 +65,15 @@ export class PostgreSQLConnection implements Connection {
     }
 
     connect() {
-        this.client.connect((err) => {
-            if (err) {
-                console.log('Cannot connect to Postgres');
-                throw err;
-            }
+        return new Promise<void>((resolve, reject) => {
+            this.client.connect((err) => {
+                if (err) {
+                    console.log('Cannot connect to Postgres');
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
     }
 

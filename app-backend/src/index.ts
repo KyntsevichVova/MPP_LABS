@@ -18,14 +18,17 @@ const connectionOptions: ConnectionOptions = {
 
 //const con: Connection = new MySQLConnection(connectionOptions);
 const con: Connection = new PostgreSQLConnection(connectionOptions);
-con.connect();
 
-app.set('view engine', 'ejs');
-app.set('views', join(__dirname, 'views'));
+con.connect().then(() => {
+    app.set('view engine', 'ejs');
+    app.set('views', join(__dirname, 'views'));
 
-app.get('/', handleIndex(con));
-app.get('/download', handleDownload(con));
-app.get(`/${SUBMIT_ENDPOINT}`, handleTask(con));
-app.post(`/${SUBMIT_ENDPOINT}`, handleSubmitTask(con));
+    app.get('/', handleIndex(con));
+    app.get('/download', handleDownload(con));
+    app.get(`/${SUBMIT_ENDPOINT}`, handleTask(con));
+    app.post(`/${SUBMIT_ENDPOINT}`, handleSubmitTask(con));
 
-app.listen(3000);
+    app.listen(3000);
+}).catch((reason) => {
+    throw reason;
+});

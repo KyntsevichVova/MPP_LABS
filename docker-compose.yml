@@ -13,7 +13,7 @@ services:
             - "/tmp/uploads:/app/uploads"
         environment: 
             DB_HOST: "postgres"
-        command: "node build/src/index.js"
+        command: "node build/index.js"
         container_name: "app_backend_${LAB}"
     postgres:
         image: postgres:12

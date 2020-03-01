@@ -1,23 +1,33 @@
-FROM alpine:3 as base
+# Install production dependencies
+FROM node:13.8.0 as deps
 
 WORKDIR /app
-COPY . /app
 
+COPY package*.json /app/
+
+RUN npm install --only=production
+
+# Copy production deps, install other deps, build app
 FROM node:13.8.0 as build
 
 WORKDIR /app
 
-COPY --from=base /app /app
-RUN npm install && npm run build
+COPY --from=deps /app /app
+RUN npm install
 
+COPY ./build_tools /app/build_tools/
+COPY tsconfig.json /app/
+COPY ./src /app/src/
+
+RUN npm run build
+
+# Copy production deps, copy build artifact, prepare environment
 FROM node:13.8.0 as release
 
 WORKDIR /app
 
-COPY --from=base /app /app
-COPY --from=build /app/build /app/build
-
-RUN npm install --only=production 
 RUN mkdir uploads
 
-ENV DB_HOST=postgres
+COPY --from=deps /app /app
+COPY .env /app
+COPY --from=build /app/build /app/build

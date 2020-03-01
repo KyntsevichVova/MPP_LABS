@@ -11,6 +11,8 @@ services:
             - "3000:3000"
         volumes:
             - "/tmp/uploads:/app/uploads"
+        environment: 
+            DB_HOST: "postgres"
         command: "node build/src/index.js"
         container_name: "app_backend_${LAB}"
     postgres:

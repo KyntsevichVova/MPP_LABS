@@ -16,21 +16,23 @@ function HomePage() {
     }, []);
 
     return (
-        <div className='container-fluid'>
-            <div className='row'>
-                {tasks.length ? (
-                    <Placeholder />
-                ) : (
-                    tasks.map((task) => {
-                        return (
-                            <div className='col-3'>
-                                <TaskCard task={task} />
-                            </div>
-                        );
-                    })
-                )}
-            </div>
-        </div>
+        <>
+            {!tasks.length ? (
+                <Placeholder />
+            ) : (
+                <div className='container-fluid'>
+                    <div className='row'>
+                        {tasks.map((task) => {
+                            return (
+                                <div className='col-3'>
+                                    <TaskCard task={task} />
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
 

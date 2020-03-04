@@ -5,6 +5,7 @@ import Navbar from '../Navbar/Navbar';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';
 import HomePage from '../pages/Home/Home';
+import './App.css';
 
 function App() {
   	return (

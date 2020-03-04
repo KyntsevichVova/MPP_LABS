@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DOWNLOAD_ENDPOINT, EDIT_ENDPOINT } from '../../lib/contants';
-import { Task } from '../../lib/types';
+import { OutputTask } from '../../lib/types';
 
 interface TaskCardProps {
-    task: Task;
+    task: OutputTask;
 }
 
 function TaskCard({

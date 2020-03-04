@@ -3,18 +3,19 @@ enum Method {
     POST = 'POST'
 };
 
-function doRequest(method: Method, url: string) {
+function doRequest(method: Method, url: string, params?: RequestInit) {
     return fetch(url, {
-        method: method
+        ...params,
+        method: method,
     });
 }
 
 export class API {
-    static get(url: string) {
-        return doRequest(Method.GET, url);
+    static get(url: string, params?: RequestInit) {
+        return doRequest(Method.GET, url, params);
     }
 
-    static post(url: string) {
-        return doRequest(Method.POST, url);
+    static post(url: string, params?: RequestInit) {
+        return doRequest(Method.POST, url, params);
     }
 }

@@ -10,7 +10,7 @@ function HomePage() {
     React.useEffect(() => {
         API.get(TASK_ENDPOINT).then((res) => {
             res.json().then((data) => {
-                setTasks(data);
+                setTasks(data.tasks);
             });
         })
     }, []);

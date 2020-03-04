@@ -1,24 +1,54 @@
 import React from 'react';
-import { Errors, Task } from '../../lib/types';
+import { Errors, InputTask } from '../../lib/types';
 
 interface TaskFormProps {
-    task: Task;
-    errors: Errors;
+    task: InputTask | undefined;
+    errors?: Errors;
+    submitCallback: Function;
+}
+
+const emptyTask: InputTask = {
+    task_text: '',
+    task_status: 'OPENED',
+    estimated_end_at: ''
 }
 
 function TaskForm({
-    task, errors
+    task, errors, submitCallback
 }: TaskFormProps) {
+
+    const [data, setData] = React.useState(task || emptyTask);
+
+    React.useEffect(() => {
+        if (task) {
+            setData(task);
+        }
+    }, [task]);
+
+    const changeHandler = (event: any) => {
+        setData({...data, [event.target.name]: event.target.value})
+    };
+
+    const handleFiles = (e: any) => {
+        const file = e.target.files[0];
+        setData({ ...data, att_file: file });
+    }
+
+    const callback = React.useCallback(() => {
+        submitCallback(data);
+    }, [submitCallback, data]);
+
     return (
-        <form method='POST' action='' encType='multipart/form-data'>
+        <div>
             <div className='form-group'>
-                <label htmlFor='task'>Task:</label>
+                <label htmlFor='task_text'>Task:</label>
                 <textarea 
                     className={`form-control ${(errors && (errors.text_long || errors.text_short)) ? 'is-invalid' : ''}`} 
-                    id='task' 
-                    maxLength={255}
+                    id='task_text' 
+                    maxLength={250}
                     name='task_text'
-                    value={task.task_text}
+                    value={data.task_text}
+                    onChange={changeHandler}
                 />
                 {(errors && (errors.text_long || errors.text_short)) && ( 
                     <small className='text-danger'>
@@ -35,22 +65,40 @@ function TaskForm({
             
             <div className='form-group'>
                 <div className='form-check'>
-                    <input className='form-check-input' type='radio' name='task_status' value='OPENED' id='r_OPENED'
-                        checked={task?.task_status?.value === 'OPENED'}
+                    <input
+                        className='form-check-input'
+                        type='radio'
+                        name='task_status'
+                        value='OPENED'
+                        id='r_OPENED'
+                        checked={data.task_status === 'OPENED'}
+                        onChange={changeHandler}
                     />
                     <label className='form-check-label' htmlFor='r_OPENED'>Opened</label>
                 </div>
 
                 <div className='form-check'>
-                    <input className='form-check-input' type='radio' name='task_status' value='INPROGRESS' id='r_INPROGRESS'
-                        checked={task?.task_status?.value === 'INPROGRESS'}
+                    <input
+                        className='form-check-input'
+                        type='radio'
+                        name='task_status'
+                        value='INPROGRESS'
+                        id='r_INPROGRESS'
+                        checked={data.task_status === 'INPROGRESS'}
+                        onChange={changeHandler}
                     />
                     <label className='form-check-label' htmlFor='r_INPROGRESS'>In progress</label>
                 </div>
                 
                 <div className='form-check'>
-                    <input className='form-check-input' type='radio' name='task_status' value='CLOSED' id='r_CLOSED'
-                        checked={task?.task_status?.value === 'CLOSED'}
+                    <input 
+                        className='form-check-input'
+                        type='radio'
+                        name='task_status'
+                        value='CLOSED'
+                        id='r_CLOSED'
+                        checked={data.task_status === 'CLOSED'}
+                        onChange={changeHandler}
                     />
                     <label className='form-check-label' htmlFor='r_CLOSED'>Closed</label>
                 </div>
@@ -58,7 +106,14 @@ function TaskForm({
 
             <div className='form-group'>
                 <label htmlFor='estimated_end_at'>Estimated end:</label>
-                <input className='form-control' type='text' name='estimated_end_at' value={`${ task.estimated_end_at }`} id='estimated_end_at'/>
+                <input
+                    className='form-control'
+                    type='text'
+                    name='estimated_end_at'
+                    value={data.estimated_end_at}
+                    id='estimated_end_at'
+                    onChange={changeHandler}
+                />
                 {(errors && errors.estimated_end_at) && (
                     <small className='text-danger'>
                         Should be a date in 'DD.MM.YYYY' format.
@@ -68,11 +123,19 @@ function TaskForm({
             
             <div className='form-group'>
                 <label htmlFor='att_file'>Attachment:</label>
-                <input className='form-control-file' type='file' name='att_file' id='att_file' />
+                <input
+                    className='form-control-file'
+                    type='file'
+                    name='att_file'
+                    id='att_file'
+                    onChange={handleFiles}
+                />
             </div>
 
-            <input type='submit' value='Submit' className='btn btn-primary' />
-        </form>
+            <button className='btn btn-primary' onClick={callback}>
+                Submit
+            </button>
+        </div>
     );
 }
 

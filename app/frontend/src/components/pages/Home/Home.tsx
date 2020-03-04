@@ -5,14 +5,14 @@ import TaskCard from '../../TaskCard/TaskCard';
 function HomePage() {
     const [tasks, setTasks] = React.useState([]);
     return (
-        <div className="container-fluid">
-            <div className="row">
+        <div className='container-fluid'>
+            <div className='row'>
                 {tasks.length ? (
                     <Placeholder />
                 ) : (
                     tasks.map((task) => {
                         return (
-                            <div className="col-3">
+                            <div className='col-3'>
                                 <TaskCard task={task} />
                             </div>
                         );

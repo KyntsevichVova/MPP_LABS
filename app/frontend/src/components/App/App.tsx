@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
+import { ADD_ENDPOINT, EDIT_ENDPOINT, HOME_ENDPOINT } from '../../lib/contants';
 import Navbar from '../Navbar/Navbar';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';
@@ -10,13 +11,13 @@ function App() {
     	<HashRouter>
 			<Navbar />
 			<Switch>
-				<Route exact path='/'>
+				<Route exact path={`${HOME_ENDPOINT}`}>
 					<HomePage />
 				</Route>
-				<Route exact path='/add'>
+				<Route exact path={`${ADD_ENDPOINT}`}>
 					<AddPage />
 				</Route>
-				<Route exact path='/edit/:task_id'>
+				<Route exact path={`${EDIT_ENDPOINT}/:task_id`}>
 					<EditPage />
 				</Route>
 			</Switch>

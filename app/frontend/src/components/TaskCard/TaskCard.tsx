@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { DOWNLOAD_ENDPOINT, EDIT_ENDPOINT } from '../../lib/contants';
 
 interface TaskCardProps {
     task: {
@@ -27,12 +28,12 @@ function TaskCard({
         deadline
     } = task;
     return (
-        <div className="card my-3 bg-light">
-            <div className="card-header">
+        <div className='card my-3 bg-light'>
+            <div className='card-header'>
                 Task
             </div>
-            <div className="card-body">
-                <h6 className="card-subtitle">
+            <div className='card-body'>
+                <h6 className='card-subtitle'>
                     Status: {task_status.text}
                 </h6>
                 
@@ -40,21 +41,21 @@ function TaskCard({
                     End at: {estimated_end_at}
                 </h6>
                 
-                <p className="card-text my-3">
+                <p className='card-text my-3'>
                     {task_text}
                 </p>
                 
                 <Link
-                    to={`/edit/${task_id}`}
-                    className="btn btn-primary mr-1"
+                    to={`${EDIT_ENDPOINT}/${task_id}`}
+                    className='btn btn-primary mr-1'
                 >
                     Edit
                 </Link>
 
                 {!!file_id && (
                     <Link
-                        to={`/download?file_id${file_id}`}
-                        className="btn btn-primary ml-1"
+                        to={`${DOWNLOAD_ENDPOINT}?file_id${file_id}`}
+                        className='btn btn-primary ml-1'
                         download
                     >
                         Attachment

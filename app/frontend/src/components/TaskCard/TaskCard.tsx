@@ -1,19 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DOWNLOAD_ENDPOINT, EDIT_ENDPOINT } from '../../lib/contants';
+import { Task } from '../../lib/types';
 
 interface TaskCardProps {
-    task: {
-        task_id: number;
-        task_status: {
-            text: string;
-            value: string;
-        }
-        task_text: string;
-        estimated_end_at: string;
-        file_id: string;
-        deadline: boolean;
-    }
+    task: Task;
 }
 
 function TaskCard({
@@ -34,7 +25,7 @@ function TaskCard({
             </div>
             <div className='card-body'>
                 <h6 className='card-subtitle'>
-                    Status: {task_status.text}
+                    Status: {task_status?.text}
                 </h6>
                 
                 <h6 className={`card-subtitle my-2 ${deadline ? 'text-danger' : '' }`}>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
+import Navbar from '../Navbar/Navbar';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';
 import HomePage from '../pages/Home/Home';
-import Navbar from '../Navbar/Navbar';
 
 function App() {
   	return (

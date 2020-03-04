@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "node build_tools/cleaner.js build",
     "build": "tsc -p .",
-    "postbuild": "node build_tools/copier.js src/views build/views",
     "start": "node build/index.js",
     "deploy": "npm run build && npm run start"
   },

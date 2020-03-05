@@ -50,6 +50,7 @@ export class Model {
         ADD_ENDPOINT,
         EDIT_ENDPOINT
     };
+    filters;
 
     constructor(tasks: Array<OutputTask> = [], 
                 task_id: number = 0, 
@@ -115,5 +116,9 @@ export class Model {
             task: validTask,
             errors: errorPresent ? errors : undefined
         };
+    }
+
+    setFilters = (filters) => {
+        this.filters = filters;
     }
 }

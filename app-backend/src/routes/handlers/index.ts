@@ -20,9 +20,13 @@ export function handleIndex(con: Connection): RequestHandler {
                 CREATED_AT DESC`,
             (error, result) => {
                 if (error || result.rows.length < 1) {
-                    res.render('index', new Model());
+                    let model = new Model();
+                    model.setFilters(String(req.query.filter ?? DEFAULT_FILTER).split(','));
+                    res.render('index', model);
                 } else {
-                    res.render('index', new Model(result.rows.map(Model.createTask)));
+                    let model = new Model(result.rows.map(Model.createTask));
+                    model.setFilters(String(req.query.filter ?? DEFAULT_FILTER).split(','));
+                    res.render('index', model);
                 }
             }
         );

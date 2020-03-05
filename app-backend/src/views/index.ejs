@@ -12,6 +12,41 @@
     <body class="h-100">
         
         <%- include("partial/navbar.ejs", { ADD_ENDPOINT: endpoints.ADD_ENDPOINT }) %>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <form action="/" method="GET" enctype="application/x-www-form-urlencoded">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="filter[]" value="OPENED" id="r_OPENED"
+                                    <% if (filters.indexOf("OPENED") != -1) { %>
+                                        checked
+                                    <% } %>
+                                >
+                                <label class="form-check-label" for="r_OPENED">Opened</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="filter[]" value="INPROGRESS" id="r_INPROGRESS"
+                                    <% if (filters.indexOf("INPROGRESS") != -1) { %>
+                                        checked
+                                    <% } %>
+                                >
+                                <label class="form-check-label" for="r_INPROGRESS">In progress</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="filter[]" value="CLOSED" id="r_CLOSED"
+                                    <% if (filters.indexOf("CLOSED") != -1) { %>
+                                        checked
+                                    <% } %>
+                                >
+                                <label class="form-check-label" for="r_CLOSED">Closed</label>
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Filter">
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <div class="container-fluid">
             <div class="row">

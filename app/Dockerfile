@@ -49,6 +49,6 @@ WORKDIR /app
 RUN mkdir uploads
 
 COPY --from=backend-deps /app/node_modules /app/node_modules
-COPY .env /app
+COPY backend/.env /app
 COPY --from=backend-build /app/build /app/build
 COPY --from=frontend-build /app/build /app/build/public

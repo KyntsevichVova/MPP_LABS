@@ -14,7 +14,6 @@
   "dependencies": {
     "busboy": "^0.3.1",
     "dotenv": "^8.2.0",
-    "ejs": "^3.0.1",
     "express": "^4.17.1",
     "mysql": "^2.18.1",
     "pg": "^7.18.1"
@@ -25,7 +24,6 @@
     "@types/mysql": "^2.15.8",
     "@types/node": "^13.7.0",
     "@types/pg": "^7.14.1",
-    "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   }
 }

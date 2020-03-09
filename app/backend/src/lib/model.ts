@@ -1,4 +1,4 @@
-import { ADD_ENDPOINT, EDIT_ENDPOINT, MAX_TASK_TEXT_LENGTH, STATUS, Status, SUBMIT_TYPE } from './constants';
+import { MAX_TASK_TEXT_LENGTH, STATUS, Status } from './constants';
 import { parseDate, printDate } from './utils';
 
 export interface BaseTask {
@@ -22,7 +22,11 @@ export interface OutputTask extends BaseTask {
 
 // Task, received from client
 export interface InputTask extends BaseTask {
-    task_status?: string
+    task_status?: string,
+    att_file?: {
+        file: any,
+        filename: string,
+    }
 }
 
 export interface ValidationError {
@@ -37,54 +41,20 @@ export interface ValidatedTask {
     errors: ValidationError | undefined
 }
 
-export interface Page {
-    title: string,
-    formAction?: string
-}
-
 export class Model {
-    page: Page;
     tasks: Array<OutputTask>;
     errors: ValidationError;
-    endpoints = {
-        ADD_ENDPOINT,
-        EDIT_ENDPOINT
-    };
 
     constructor(tasks: Array<OutputTask> = [], 
-                task_id: number = 0, 
-                submit_type?: SUBMIT_TYPE, 
                 errors?: ValidationError) {
 
         this.tasks = tasks;
         this.errors = errors;
-        
-        switch (submit_type) {
-            case SUBMIT_TYPE.ADD:
-                this.page = {
-                    title: 'Add task',
-                    formAction: `${ADD_ENDPOINT}&task_id=${task_id}`
-                };
-                break;
-        
-            case SUBMIT_TYPE.EDIT:
-                this.page = {
-                    title: 'Edit task',
-                    formAction: `${EDIT_ENDPOINT}&task_id=${task_id}`
-                };
-                break;
-
-            default:
-                this.page = {
-                    title: 'Task manager'
-                };
-                break;
-        }
     }
 
     static createTask(value: RawTask | InputTask = {}): OutputTask {
         return {
-            task_id: value.task_id ?? '0',
+            task_id: value.task_id,
             task_text: value.task_text ?? '',
             task_status: STATUS[value.task_status] ?? STATUS.OPENED,
             estimated_end_at: value.estimated_end_at ? printDate(new Date(value.estimated_end_at)) : '',

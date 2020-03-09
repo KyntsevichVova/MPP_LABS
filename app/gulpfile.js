@@ -5,6 +5,10 @@ const del = require('delete');
 
 const tsProject = ts.createProject('backend/tsconfig.json');
 
+function copyUploads(source, target) {
+    return () => src(`${source}/**/*`).pipe(dest(target));
+}
+
 function clean(cb) {
     return del(['build'], cb);
 }
@@ -41,11 +45,23 @@ function moveFrontend() {
         .pipe(dest('build/src/public'));
 }
 
-exports.default = series(
+function run(cb) {
+    exec('node src/index.js', { 
+        cwd: 'build' 
+    }, (err, stdout, stderr) => {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+}
+
+exports.build = series(
+    copyUploads('build/uploads', 'uploads'),
     clean, 
     parallel(
         moveBackendDeps,
         moveBackendFiles,
+        copyUploads('uploads', 'build/uploads'),
         buildBackend,
         series(
             buildFrontend, 
@@ -53,3 +69,5 @@ exports.default = series(
         )
     )
 );
+
+exports.run = run;

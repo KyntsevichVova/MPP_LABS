@@ -10,7 +10,7 @@ services:
         ports:
             - "3001:3000"
         volumes:
-            - "/tmp/uploads:/app/uploads"
+            - "/tmp/uploads/${LAB}:/app/uploads"
         environment: 
             DB_HOST: "postgres"
         command: "node build/index.js"

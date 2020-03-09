@@ -11,6 +11,7 @@ export interface Connection {
     connect(): Promise<void>;
 
     query(sql: string, callback: QueryCallback): void;
+    query(sql: string, params?: Array<any>): Promise<QueryResult>;
     query(sql: string, params: Array<any>, callback: QueryCallback): void;
 
     escape(s: string): string;
@@ -43,12 +44,22 @@ export class MySQLConnection implements Connection {
         });
     }
 
-    query(sql: string, params: any, callback?: QueryCallback): void {
+    query(sql: string, params: any, callback?: QueryCallback) {
         if ((typeof params === 'function') && !callback) {
             callback = params;
             this.con.query(sql, callback);
-        } else {
+        } else if (callback) {
             this.con.query(sql, params, callback);   
+        } else {
+            return new Promise<QueryResult>((resolve, reject) => {
+                this.con.query(sql, params, (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve({rows: results});
+                    }
+                })
+            });
         }
     }
 
@@ -77,12 +88,14 @@ export class PostgreSQLConnection implements Connection {
         });
     }
 
-    query(sql: string, params: any, callback?: QueryCallback): void {
+    query(sql: string, params: any, callback?: QueryCallback) {
         if ((typeof params === 'function') && !callback) {
             callback = params;
             this.client.query(sql, callback);
-        } else {
+        } else if (callback) {
             this.client.query(sql, params, callback);   
+        } else {
+            return this.client.query(sql, params);
         }
     };
 

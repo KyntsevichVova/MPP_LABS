@@ -1,23 +1,24 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { TASK_ENDPOINT } from '../../../lib/contants';
+import { TASKS_ENDPOINT } from '../../../lib/contants';
 import { InputTask } from '../../../lib/types';
 import TaskForm from '../../TaskForm/TaskForm';
 
 function EditPage() {
+    const { task_id } = useParams();
     const { redirect, setShouldRedirect } = useRedirect('/');
-    const [task, setTask] = React.useState(undefined);
+    const [task, setTask] = React.useState(undefined as any);
     const [errors, setErrors] = React.useState({});
 
     React.useEffect(() => {
-        API.get(TASK_ENDPOINT).then((res) => {
+        API.get(`${TASKS_ENDPOINT}/${task_id}`).then((res) => {
             res.json().then((data) => {
                 setTask(data.tasks[0]);
             });
-        })
-    }, []);
+        });
+    }, [task_id]);
 
     const submitCallback = React.useCallback((task: InputTask) => {
         const data = new FormData();
@@ -27,7 +28,7 @@ function EditPage() {
         if (task.att_file)
             data.append('att_file', task.att_file);
 
-        API.post(TASK_ENDPOINT, {
+        API.post(`${TASKS_ENDPOINT}/${task_id}`, {
             body: data
         }).then((response) => {
             if (response.status === 200) {
@@ -39,7 +40,7 @@ function EditPage() {
                 });
             }
         });
-    }, []);
+    }, [task_id]);
 
     return (
         <>

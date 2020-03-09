@@ -1,9 +1,9 @@
 import { config } from 'dotenv';
 import express from 'express';
 import { join } from 'path';
+import { createTask, getFile, getTask, getTasks, handleException, parseForm, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
-import { SUBMIT_ENDPOINT } from './lib/constants';
-import { handleDownload, handleIndex, handleSubmitTask, handleTask } from './routes';
+import { FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
 
 config();
 
@@ -20,13 +20,19 @@ const connectionOptions: ConnectionOptions = {
 const con: Connection = new PostgreSQLConnection(connectionOptions);
 
 con.connect().then(() => {
-    app.set('view engine', 'ejs');
-    app.set('views', join(__dirname, 'views'));
+    app.use(express.static(join(__dirname, 'public')));
 
-    app.get('/', handleIndex(con));
-    app.get('/download', handleDownload(con));
-    app.get(`/${SUBMIT_ENDPOINT}`, handleTask(con));
-    app.post(`/${SUBMIT_ENDPOINT}`, handleSubmitTask(con));
+    app.get(`${FILES_ENDPOINT}/:file_id`, getFile(con));
+
+    app.route(`${TASKS_ENDPOINT}`)
+        .get(getTasks(con))
+        .post(parseForm(con), createTask(con));
+
+    app.route(`${TASKS_ENDPOINT}/:task_id`)
+        .get(getTask(con))
+        .post(parseForm(con), updateTask(con));
+
+    app.use(handleException);
 
     app.listen(3000);
 }).catch((reason) => {

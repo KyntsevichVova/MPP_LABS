@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { TASK_ENDPOINT } from '../../../lib/contants';
+import { TASKS_ENDPOINT } from '../../../lib/contants';
 import { InputTask } from '../../../lib/types';
 import TaskForm from '../../TaskForm/TaskForm';
 
@@ -19,10 +19,10 @@ function AddPage() {
         if (task.att_file)
             data.append('att_file', task.att_file);
 
-        API.post(TASK_ENDPOINT, {
+        API.post(`${TASKS_ENDPOINT}`, {
             body: data
         }).then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201) {
                 setShouldRedirect(true);
             } else {
                 response.json().then((result) => {

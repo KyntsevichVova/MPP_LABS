@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { DOWNLOAD_ENDPOINT, EDIT_ENDPOINT } from '../../lib/contants';
+import { FILES_ENDPOINT, TASKS_ENDPOINT } from '../../lib/contants';
 import { OutputTask } from '../../lib/types';
 
 interface TaskCardProps {
@@ -37,20 +37,22 @@ function TaskCard({
                 </p>
                 
                 <Link
-                    to={`${EDIT_ENDPOINT}/${task_id}`}
+                    to={`${TASKS_ENDPOINT}/${task_id}`}
                     className='btn btn-primary mr-1'
                 >
                     Edit
                 </Link>
 
                 {!!file_id && (
-                    <Link
-                        to={`${DOWNLOAD_ENDPOINT}?file_id${file_id}`}
-                        className='btn btn-primary ml-1'
+                    <a
+                        href={`${FILES_ENDPOINT}/${file_id}`}
+                        className='btn btn-info ml-1'
                         download
+                        target='_blank'
+                        rel='noopener noreferrer'
                     >
                         Attachment
-                    </Link>
+                    </a>
                 )}
             </div>
         </div>

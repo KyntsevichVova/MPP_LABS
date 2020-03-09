@@ -1,8 +1,8 @@
 import React from 'react';
-import { Errors, InputTask } from '../../lib/types';
+import { Errors, InputTask, OutputTask } from '../../lib/types';
 
 interface TaskFormProps {
-    task: InputTask | undefined;
+    task: OutputTask | undefined;
     errors?: Errors;
     submitCallback: Function;
 }
@@ -21,7 +21,10 @@ function TaskForm({
 
     React.useEffect(() => {
         if (task) {
-            setData(task);
+            setData({
+                ...task,
+                task_status: task.task_status?.value
+            });
         }
     }, [task]);
 

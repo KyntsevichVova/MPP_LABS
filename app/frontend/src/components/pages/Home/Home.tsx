@@ -1,6 +1,6 @@
 import React from 'react';
 import { API } from '../../../lib/api';
-import { TASK_ENDPOINT } from '../../../lib/contants';
+import { TASKS_ENDPOINT } from '../../../lib/contants';
 import Placeholder from '../../Placeholder/Placeholder';
 import TaskCard from '../../TaskCard/TaskCard';
 
@@ -8,7 +8,7 @@ function HomePage() {
     const [tasks, setTasks] = React.useState([]);
 
     React.useEffect(() => {
-        API.get(TASK_ENDPOINT).then((res) => {
+        API.get(TASKS_ENDPOINT).then((res) => {
             res.json().then((data) => {
                 setTasks(data.tasks);
             });

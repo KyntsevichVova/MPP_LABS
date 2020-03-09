@@ -17,7 +17,7 @@ function buildBackend() {
     return tsProject.src()
         .pipe(tsProject())
         .js
-        .pipe(dest('build/src'));
+        .pipe(dest('build'));
 }
 
 function moveBackendDeps() {
@@ -42,26 +42,26 @@ function buildFrontend(cb) {
 
 function moveFrontend() {
     return src('frontend/build/**/*')
-        .pipe(dest('build/src/public'));
+        .pipe(dest('build/public'));
 }
 
 function run(cb) {
-    exec('node src/index.js', { 
-        cwd: 'build' 
-    }, (err, stdout, stderr) => {
+    exec('node build/index.js', (err, stdout, stderr) => {
         console.log(stdout);
         console.log(stderr);
         cb(err);
     });
 }
 
+exports.build_backend = buildBackend;
+
+exports.build_frontend = buildFrontend;
+
 exports.build = series(
-    copyUploads('build/uploads', 'uploads'),
     clean, 
     parallel(
         moveBackendDeps,
         moveBackendFiles,
-        copyUploads('uploads', 'build/uploads'),
         buildBackend,
         series(
             buildFrontend, 

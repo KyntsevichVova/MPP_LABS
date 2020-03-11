@@ -1,6 +1,6 @@
 import React from 'react';
 
-type RedirectState = {
+interface RedirectState {
     should: boolean;
     to: string;
 }

@@ -2,7 +2,7 @@ import mysql from 'mysql';
 import { Client } from 'pg';
 
 interface QueryResult {
-    rows: Array<any>
+    rows: Array<any>;
 }
 
 type QueryCallback = (error: Error, result: QueryResult) => void;

@@ -1,6 +1,6 @@
 export interface Status {
-    text: string,
-    value: string
+    text: string;
+    value: string;
 }
 
 export const STATUS = {

@@ -32,7 +32,7 @@ con.connect().then(() => {
         .get(getTask(con))
         .post(parseForm(con), updateTask(con));
 
-    app.use(handleException);
+    app.use(handleException());
 
     app.listen(3000);
 }).catch((reason) => {

@@ -21,20 +21,28 @@ const connectionOptions: ConnectionOptions = {
 const con: Connection = new PostgreSQLConnection(connectionOptions);
 
 con.connect().then(() => {
-    app.use(express.static(join(__dirname, 'public')));
+    const FileRouter = express.Router();
+    const TaskCollectionRouter = express.Router();
+    const TaskRouter = express.Router();
 
-    app.get(`${FILES_ENDPOINT}/:file_id`, getFile(con));
+    FileRouter.route(`${FILES_ENDPOINT}/:file_id`)
+        .get(getFile(con));
 
-    app.route(`${TASKS_ENDPOINT}`)
+    TaskCollectionRouter.route(`${TASKS_ENDPOINT}`)
         .get(getTasks(con))
         .post(parseForm(con), createTask(con));
 
-    app.route(`${TASKS_ENDPOINT}/:task_id`)
+    TaskRouter.route(`${TASKS_ENDPOINT}/:task_id`)
         .get(getTask(con))
         .post(parseForm(con), updateTask(con));
 
-    app.use(handleException);
-
+    app
+        .use(express.static(join(__dirname, 'public')))
+        .use(FileRouter)
+        .use(TaskCollectionRouter)
+        .use(TaskRouter)
+        .use(handleException());
+        
     app.listen(3000);
 }).catch((reason) => {
     throw reason;

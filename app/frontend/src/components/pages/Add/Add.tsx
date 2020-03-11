@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { TASKS_ENDPOINT } from '../../../lib/contants';
+import { TASKS_ENDPOINT } from '../../../lib/constants';
 import { InputTask } from '../../../lib/types';
 import TaskForm from '../../TaskForm/TaskForm';
 

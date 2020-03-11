@@ -46,7 +46,9 @@ function moveFrontend() {
 }
 
 function run(cb) {
-    exec('node build/index.js', (err, stdout, stderr) => {
+    exec('node index.js', {
+        cwd: 'build'
+    }, (err, stdout, stderr) => {
         console.log(stdout);
         console.log(stderr);
         cb(err);

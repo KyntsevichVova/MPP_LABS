@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FILES_ENDPOINT, TASKS_ENDPOINT } from '../../lib/contants';
+import { FILES_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
 import { OutputTask } from '../../lib/types';
 
 interface TaskCardProps {

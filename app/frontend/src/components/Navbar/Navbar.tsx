@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/contants';
+import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
 
 function Navbar() {
     return (

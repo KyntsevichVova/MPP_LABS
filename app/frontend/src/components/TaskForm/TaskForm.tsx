@@ -1,5 +1,6 @@
 import React from 'react';
 import { Errors, InputTask, OutputTask } from '../../lib/types';
+import { STATUS } from '../../lib/constants';
 
 interface TaskFormProps {
     task: OutputTask | undefined;
@@ -67,44 +68,20 @@ function TaskForm({
             </div>
             
             <div className='form-group'>
-                <div className='form-check'>
-                    <input
-                        className='form-check-input'
-                        type='radio'
-                        name='task_status'
-                        value='OPENED'
-                        id='r_OPENED'
-                        checked={data.task_status === 'OPENED'}
-                        onChange={changeHandler}
-                    />
-                    <label className='form-check-label' htmlFor='r_OPENED'>Opened</label>
-                </div>
-
-                <div className='form-check'>
-                    <input
-                        className='form-check-input'
-                        type='radio'
-                        name='task_status'
-                        value='INPROGRESS'
-                        id='r_INPROGRESS'
-                        checked={data.task_status === 'INPROGRESS'}
-                        onChange={changeHandler}
-                    />
-                    <label className='form-check-label' htmlFor='r_INPROGRESS'>In progress</label>
-                </div>
-                
-                <div className='form-check'>
-                    <input 
-                        className='form-check-input'
-                        type='radio'
-                        name='task_status'
-                        value='CLOSED'
-                        id='r_CLOSED'
-                        checked={data.task_status === 'CLOSED'}
-                        onChange={changeHandler}
-                    />
-                    <label className='form-check-label' htmlFor='r_CLOSED'>Closed</label>
-                </div>
+                {Object.entries(STATUS).map(([key, status]) => (
+                    <div className='form-check' key={status.value}>
+                        <input
+                            className='form-check-input'
+                            type='radio'
+                            name='task_status'
+                            value={status.value}
+                            id={`r_${status.value}`}
+                            checked={data.task_status === status.value}
+                            onChange={changeHandler}
+                        />
+                        <label className='form-check-label' htmlFor={`r_${status.value}`}>{status.text}</label>
+                    </div>
+                ))}
             </div> 
 
             <div className='form-group'>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/contants';
+import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
 import Navbar from '../Navbar/Navbar';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';

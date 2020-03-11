@@ -2,7 +2,7 @@ import { Connection } from '../lib/connection';
 import { DEFAULT_FILTER } from '../lib/constants';
 import { Model } from '../lib/model';
 import { RequestHandler } from '../lib/types';
-import { Exception, HttpStatus } from '../lib/exception';
+import { ExceptionType, HttpStatus, Exception } from '../lib/exception';
 
 export function getTasks(con: Connection): RequestHandler {
     return (req, res, next) => {
@@ -22,7 +22,7 @@ export function getTasks(con: Connection): RequestHandler {
                     CREATED_AT DESC`,
                 (error, result) => {
                     if (error) {
-                        throw Exception.DATABASE_ERROR;
+                        throw Exception.DatabaseError(error);
                     } else {
                         res
                             .status(HttpStatus.OK)

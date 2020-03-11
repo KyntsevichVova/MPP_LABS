@@ -3,52 +3,54 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { Connection } from '../lib/connection';
 import { UPLOADS_DIR } from '../lib/constants';
+import { Exception } from '../lib/exception';
 import { RequestHandler } from '../lib/types';
 
 export function parseForm(con: Connection): RequestHandler {
     return (req, res, next) => {
-        const fields: Array<Promise<any>> = [];
+        Promise.resolve().then(() => {
+            const fields: Array<Promise<any>> = [];
 
-        const busboy = new Busboy({
-            headers: req.headers,
-            limits: {
-                files: 1
-            }
-        });
-
-        busboy.on('file', (fieldname, file, filename) => {
-            if (filename.length === 0) {
-                file.resume();
-                return;
-            }
-
-            fields.push(writeFile(con, file, filename));
-        });
-
-        busboy.on('field', (fieldname, val) => {
-            fields.push(Promise.resolve({
-                [fieldname]: val
-            }));
-        });
-
-        busboy.on('finish', () => {
-            Promise.all(fields).then((value) => {
-                let body = {};
-                value.forEach((field) => {
-                    body = {
-                        ...body,
-                        ...field
-                    };
-                });
-                req.body = body;
-                next();
-            }).catch((reason) => {
-                console.log(reason);
-                next(reason);
+            const busboy = new Busboy({
+                headers: req.headers,
+                limits: {
+                    files: 1
+                }
             });
-        });
 
-        req.pipe(busboy);
+            busboy.on('file', (fieldname, file, filename) => {
+                if (filename.length === 0) {
+                    file.resume();
+                    return;
+                }
+
+                fields.push(writeFile(con, file, filename));
+            });
+
+            busboy.on('field', (fieldname, val) => {
+                fields.push(Promise.resolve({
+                    [fieldname]: val
+                }));
+            });
+
+            busboy.on('finish', () => {
+                Promise.all(fields).then((value) => {
+                    let body = {};
+                    value.forEach((field) => {
+                        body = {
+                            ...body,
+                            ...field
+                        };
+                    });
+                    req.body = body;
+                    next();
+                }).catch((reason) => {
+                    throw Exception.BadRequest(reason);
+                });
+            });
+
+            req.pipe(busboy);
+        }).catch(next);
     }
 }
 

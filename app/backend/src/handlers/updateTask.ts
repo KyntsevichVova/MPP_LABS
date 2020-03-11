@@ -30,7 +30,7 @@ export function updateTask(con: Connection): RequestHandler {
                 [task.task_text, task.task_status, task.estimated_end_at, task.file_id],
                 (error, result) => {
                     if (error) {
-                        throw Exception.DATABASE_ERROR;
+                        throw Exception.DatabaseError(error);
                     }
                     if (task.file_id) {
                         con.query(
@@ -43,7 +43,7 @@ export function updateTask(con: Connection): RequestHandler {
                             [task_id, task.file_id],
                             (error, result) => {
                                 if (error) {
-                                    throw Exception.DATABASE_ERROR;
+                                    throw Exception.DatabaseError(error);
                                 } else {
                                     res.status(HttpStatus.OK).end();
                                 }

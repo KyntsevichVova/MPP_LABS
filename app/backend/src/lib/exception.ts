@@ -9,9 +9,38 @@ export enum HttpStatus {
     INTERNAL_SERVER_ERROR = 500,
 }
 
-export enum Exception {
+export enum ExceptionType {
     FILE_NOT_FOUND,
     DATABASE_ERROR,
     BAD_REQUEST,
     ENTITY_NOT_FOUND,
+}
+
+export class Exception {
+    reason: any;
+    type: ExceptionType;
+
+    constructor(type: ExceptionType, reason?: any) {
+        this.type = type;
+        this.reason = reason;
+        if (reason) {
+            console.log(reason);
+        }
+    }
+
+    static FileNotFound(reason?: any) {
+        return new Exception(ExceptionType.FILE_NOT_FOUND, reason);
+    }
+
+    static DatabaseError(reason?: any) {
+        return new Exception(ExceptionType.DATABASE_ERROR, reason);
+    }
+
+    static BadRequest(reason?: any) {
+        return new Exception(ExceptionType.BAD_REQUEST, reason);
+    }
+
+    static EntityNotFound(reason?: any) {
+        return new Exception(ExceptionType.ENTITY_NOT_FOUND, reason);
+    }
 }

@@ -22,20 +22,20 @@ export function getFile(con: Connection): RequestHandler {
                             FILE_ID = ${file_id}`, 
                         (error, result) => {
                             if (error) {
-                                throw Exception.DATABASE_ERROR;
+                                throw Exception.DatabaseError(error);
                             }
                             if (result.rows.length < 1) {
-                                throw Exception.FILE_NOT_FOUND;
+                                throw Exception.FileNotFound();
                             } else {
                                 res.download(filename, result.rows[0].file_name);
                             }
                         }
                     );
                 } else {
-                    throw Exception.FILE_NOT_FOUND;
+                    throw Exception.FileNotFound();
                 }
             } else {
-                throw Exception.BAD_REQUEST;
+                throw Exception.BadRequest();
             }
         }).catch(next);
     }

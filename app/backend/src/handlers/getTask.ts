@@ -9,7 +9,7 @@ export function getTask(con: Connection): RequestHandler {
             const task_id = Number.parseInt(req.params.task_id, 10);
 
             if (!task_id) { 
-                throw Exception.BAD_REQUEST;
+                throw Exception.BadRequest();
             }
             
             con.query(
@@ -20,10 +20,10 @@ export function getTask(con: Connection): RequestHandler {
                     (TASK_ID > 0)`,
                 (error, result) => {
                     if (error) {
-                        throw Exception.DATABASE_ERROR;
+                        throw Exception.DatabaseError(error);
                     }
                     if (result.rows.length < 1) {
-                        throw Exception.ENTITY_NOT_FOUND;
+                        throw Exception.EntityNotFound();
                     } else {
                         res
                             .status(HttpStatus.OK)

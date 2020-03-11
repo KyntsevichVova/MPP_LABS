@@ -1,5 +1,5 @@
-import { ErrorRequestHandler } from "express";
-import { Exception, ExceptionType, HttpStatus } from "../lib/exception";
+import { ErrorRequestHandler } from 'express';
+import { Exception, ExceptionType, HttpStatus } from '../lib/exception';
 
 export function handleException(): ErrorRequestHandler {
     return (err, req, res, next) => {

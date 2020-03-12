@@ -7,7 +7,7 @@ import { InputTask } from '../../../lib/types';
 import TaskForm from '../../TaskForm/TaskForm';
 
 function AddPage() {
-    const { redirect, setShouldRedirect } = useRedirect('/');
+    const { redirect, setShouldRedirect, setToRedirect } = useRedirect('/');
     const [task, setTask] = React.useState(undefined);
     const [errors, setErrors] = React.useState({});
 
@@ -23,6 +23,9 @@ function AddPage() {
             body: data
         }).then((response) => {
             if (response.status === 201) {
+                setShouldRedirect(true);
+            } else if (response.status === 401) {
+                setToRedirect('/auth/login');
                 setShouldRedirect(true);
             } else {
                 response.json().then((result) => {

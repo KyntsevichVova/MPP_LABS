@@ -28,6 +28,7 @@ con.connect().then(() => {
     const TaskRouter = express.Router();
 
     AuthRouter
+        .post(`${AUTH_ENDPOINT}/logout`, logoutUser())
         .post(`${AUTH_ENDPOINT}/login`, parseForm(con), loginUser(con), issueToken())
         .post(`${AUTH_ENDPOINT}/register`, parseForm(con), registerUser(con), issueToken());
 

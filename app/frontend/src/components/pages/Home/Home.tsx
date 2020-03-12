@@ -5,12 +5,15 @@ import Placeholder from '../../Placeholder/Placeholder';
 import TaskCard from '../../TaskCard/TaskCard';
 import Filters from '../../Filters/Filters';
 import { OutputTask } from '../../../lib/types';
+import { useRedirect } from '../../../hooks';
+import { Redirect } from 'react-router-dom';
 
 const initialFilters = Object.fromEntries(Object.keys(STATUS).map((status) => [status, true]));
 
 function HomePage() {
     const [tasks, setTasks] = React.useState([] as Array<OutputTask>);
     const [filters, setFilters] = React.useState(initialFilters);
+    const { redirect, setShouldRedirect } = useRedirect('/auth/login');
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams();
@@ -23,9 +26,13 @@ function HomePage() {
                 .join(',')
         );
         API.get(TASKS_ENDPOINT, { searchParams }).then((res) => {
-            res.json().then((data) => {
-                setTasks(data.tasks);
-            });
+            if (res.status === 200) {
+                res.json().then((data) => {
+                    setTasks(data.tasks);
+                });
+            } else if (res.status === 401) {
+                setShouldRedirect(true);
+            }
         });
     }, [filters]);
 
@@ -38,6 +45,7 @@ function HomePage() {
 
     return (
         <>
+            {redirect.should && (<Redirect to={redirect.to} />)}
             {!tasks.length ? (
                 <Placeholder />
             ) : (

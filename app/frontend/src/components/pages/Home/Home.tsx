@@ -13,7 +13,7 @@ const initialFilters = Object.fromEntries(Object.keys(STATUS).map((status) => [s
 function HomePage() {
     const [tasks, setTasks] = React.useState([] as Array<OutputTask>);
     const [filters, setFilters] = React.useState(initialFilters);
-    const { redirect, setShouldRedirect } = useRedirect('/auth/login');
+    const { redirect, setShouldRedirect } = useRedirect('/login');
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams();

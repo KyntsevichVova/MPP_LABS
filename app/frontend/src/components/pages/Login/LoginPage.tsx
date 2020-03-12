@@ -41,8 +41,8 @@ function LoginPage() {
             <div className="container auth-form">
                 <div className="d-flex flex-column">
                     <div className='my-3'>
-                        <Link to={'/auth/login'} className='btn btn-primary mx-3'>Login</Link>
-                        <Link to={'/auth/register'} className='btn btn-primary mx-3'>Register</Link>
+                        <Link to={'/login'} className='btn btn-primary mx-3'>Login</Link>
+                        <Link to={'/register'} className='btn btn-primary mx-3'>Register</Link>
                     </div>
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>

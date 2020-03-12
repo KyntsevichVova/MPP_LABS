@@ -5,7 +5,7 @@ import { API } from '../../lib/api';
 import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
 
 function Navbar() {
-    const { redirect, setShouldRedirect } = useRedirect('/auth/login');
+    const { redirect, setShouldRedirect } = useRedirect('/login');
 
     const logout = () => {
         API.post('/auth/logout').then(() => {

@@ -34,7 +34,7 @@ function EditPage() {
             if (response.status === 200) {
                 setShouldRedirect(true);
             } else if (response.status === 401) {
-                setToRedirect('/auth/login');
+                setToRedirect('/login');
                 setShouldRedirect(true);
             } else {
                 response.json().then((result) => {

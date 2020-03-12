@@ -12,15 +12,17 @@ import './App.css';
 function App() {
   	return (
     	<HashRouter>
-			<Navbar />
 			<Switch>
 				<Route exact path={`${HOME_ENDPOINT}`}>
+					<Navbar />
 					<HomePage />
 				</Route>
 				<Route exact path={`${TASKS_ENDPOINT}`}>
+					<Navbar />
 					<AddPage />
 				</Route>
 				<Route exact path={`${TASKS_ENDPOINT}/:task_id`}>
+					<Navbar />
 					<EditPage />
 				</Route>
 				<Route path={`${LOGIN_ENDPOINT}`}>

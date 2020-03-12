@@ -25,7 +25,7 @@ function AddPage() {
             if (response.status === 201) {
                 setShouldRedirect(true);
             } else if (response.status === 401) {
-                setToRedirect('/auth/login');
+                setToRedirect('/login');
                 setShouldRedirect(true);
             } else {
                 response.json().then((result) => {

@@ -24,7 +24,7 @@ export function parseForm(con: Connection): RequestHandler {
                     return;
                 }
 
-                fields.push(writeFile(con, file, filename));
+                fields.push(writeFile(con, file, filename, req.payload.user_id));
             });
 
             busboy.on('field', (fieldname, val) => {
@@ -54,16 +54,16 @@ export function parseForm(con: Connection): RequestHandler {
     }
 }
 
-function writeFile(con: Connection, file: NodeJS.ReadableStream, filename: string): Promise<object> {
+function writeFile(con: Connection, file: NodeJS.ReadableStream, filename: string, user_id: number): Promise<object> {
     return new Promise((resolve) => {
         con.query(
             `INSERT INTO TASK_FILE
-                (TASK_ID, FILE_NAME)
+                (TASK_ID, FILE_NAME, CREATED_BY)
             VALUES
-                (-1, $1)
+                (-1, $1, $2)
             RETURNING
                 file_id`,
-            [filename]
+            [filename, user_id]
         ).then((result) => {
             const file_id = result.rows[0].file_id;
             const saveTo = join(process.cwd(), UPLOADS_DIR, `${file_id}`);

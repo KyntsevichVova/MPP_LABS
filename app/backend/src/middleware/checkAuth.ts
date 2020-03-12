@@ -14,6 +14,8 @@ export function checkAuth(): RequestHandler {
                 } catch (e) {
                     throw Exception.AuthRequired(e);
                 }
+            } else {
+                throw Exception.AuthRequired();
             }
         }).catch(next);
     }

@@ -9,6 +9,8 @@ export function getFile(con: Connection): RequestHandler {
     return (req, res, next) => {
         Promise.resolve().then(() => {
             const file_id = Number.parseInt(req.params.file_id, 10);
+
+            const payload = req.payload;
         
             if (file_id) {
                 const filename = join(process.cwd(), UPLOADS_DIR, String(file_id));
@@ -19,7 +21,10 @@ export function getFile(con: Connection): RequestHandler {
                         FROM
                             TASK_FILE
                         WHERE
-                            FILE_ID = ${file_id}`, 
+                            FILE_ID = ${file_id}
+                        AND
+                            CREATED_BY = $1`,
+                        [payload.user_id], 
                         (error, result) => {
                             if (error) {
                                 throw Exception.DatabaseError(error);

@@ -19,6 +19,8 @@ export function updateTask(con: Connection): RequestHandler {
                 return;
             }
 
+            const payload = req.payload;
+
             con.query(
                 `UPDATE TASK SET
                     TASK_TEXT = $1,
@@ -26,8 +28,8 @@ export function updateTask(con: Connection): RequestHandler {
                     ESTIMATED_END_AT = $3,
                     FILE_ID = COALESCE($4, FILE_ID)
                 WHERE 
-                    TASK_ID = ${task_id} AND (TASK_ID > 0)`,
-                [task.task_text, task.task_status, task.estimated_end_at, task.file_id],
+                    TASK_ID = ${task_id} AND (TASK_ID > 0) AND CREATED_BY = $5`,
+                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id],
                 (error, result) => {
                     if (error) {
                         throw Exception.DatabaseError(error);
@@ -39,8 +41,10 @@ export function updateTask(con: Connection): RequestHandler {
                             WHERE
                                 FILE_ID = $2
                             AND
-                                TASK_ID = -1`,
-                            [task_id, task.file_id],
+                                TASK_ID = -1
+                            AND
+                                CREATED_BY = $3`,
+                            [task_id, task.file_id, payload.user_id],
                             (error, result) => {
                                 if (error) {
                                     throw Exception.DatabaseError(error);

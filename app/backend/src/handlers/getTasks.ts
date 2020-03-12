@@ -11,15 +11,20 @@ export function getTasks(con: Connection): RequestHandler {
                 .split(',')
                 .map((filter) => con.escape(filter.toUpperCase()))
                 .join(', ');
+
+            const payload = req.payload;
             
             con.query(
                 `SELECT * FROM TASK
                 WHERE
-                    (TASK_ID > 0)
+                    TASK_ID > 0
                 AND
-                    (TASK_STATUS IN (${filters}))
+                    TASK_STATUS IN (${filters})
+                AND
+                    CREATED_BY = $1
                 ORDER BY 
                     CREATED_AT DESC`,
+                [payload.user_id],
                 (error, result) => {
                     if (error) {
                         throw Exception.DatabaseError(error);

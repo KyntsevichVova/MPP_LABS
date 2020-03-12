@@ -11,13 +11,18 @@ export function getTask(con: Connection): RequestHandler {
             if (!task_id) { 
                 throw Exception.BadRequest();
             }
+
+            const payload = req.payload;
             
             con.query(
                 `SELECT * FROM TASK
                 WHERE
-                    (TASK_ID = '${task_id}')
+                    TASK_ID = $1
                 AND 
-                    (TASK_ID > 0)`,
+                    TASK_ID > 0
+                AND
+                    CREATED_BY = $2`,
+                [task_id, payload.user_id],
                 (error, result) => {
                     if (error) {
                         throw Exception.DatabaseError(error);

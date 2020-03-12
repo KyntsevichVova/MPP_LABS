@@ -18,14 +18,16 @@ export function createTask(con: Connection): RequestHandler {
                 return;
             }
 
+            const payload = req.payload;
+
             con.query(
                 `INSERT INTO TASK
-                    (TASK_TEXT, TASK_STATUS, CREATED_AT, ESTIMATED_END_AT, FILE_ID)
+                    (TASK_TEXT, TASK_STATUS, CREATED_AT, ESTIMATED_END_AT, FILE_ID, CREATED_BY)
                 VALUES
-                    ($1, $2, NOW(), $3, $4)
+                    ($1, $2, NOW(), $3, $4, $5)
                 RETURNING
                     TASK_ID`,
-                [task.task_text, task.task_status, task.estimated_end_at, task.file_id],
+                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id],
                 (error, result) => {
                     if (error || result.rows.length < 1) {
                         throw Exception.DatabaseError(error);
@@ -40,8 +42,10 @@ export function createTask(con: Connection): RequestHandler {
                             WHERE
                                 FILE_ID = $2
                             AND
-                                TASK_ID = -1`,
-                            [task_id, task.file_id],
+                                TASK_ID = -1
+                            AND
+                                CREATED_BY = $3`,
+                            [task_id, task.file_id, payload.user_id],
                             (error, result) => {
                                 if (error) {
                                     throw Exception.DatabaseError(error);

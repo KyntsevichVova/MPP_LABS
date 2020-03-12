@@ -61,7 +61,7 @@ export class Auth {
             `SELECT 
                 * 
             FROM 
-                'USER'
+                "USER"
             WHERE
                 EMAIL=$1
             `,
@@ -107,7 +107,7 @@ export class Auth {
             `SELECT 
                 * 
             FROM 
-                'USER'
+                "USER"
             WHERE
                 EMAIL=$1
             `,
@@ -117,7 +117,7 @@ export class Auth {
                 errors.no_such_user = true;
                 anyError = true;
             } else {
-                if (!bcrypt.compareSync(password, result.rows[0].password)) {
+                if (!bcrypt.compareSync(password, result.rows[0].PASSWORD)) {
                     errors.no_such_user = true;
                     anyError = true;
                 } else {

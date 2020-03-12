@@ -17,8 +17,8 @@ export function registerUser(con: Connection): RequestHandler {
             }
 
             con.query(
-                `INSERT INTO 'USER'
-                    (EMAIL, 'PASSWORD')
+                `INSERT INTO "USER"
+                    (EMAIL, "PASSWORD")
                 VALUES
                     ($1, $2)
                 RETURNING

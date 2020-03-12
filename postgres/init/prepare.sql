@@ -41,7 +41,7 @@ INSERT INTO TASK (TASK_ID, TASK_TEXT, TASK_STATUS, CREATED_AT, CREATED_BY, ESTIM
     'dummy task',
     '',
     NOW(),
-    -1
+    -1,
     CURRENT_DATE,
     NULL,
 );

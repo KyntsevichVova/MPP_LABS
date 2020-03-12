@@ -14,6 +14,7 @@ export enum ExceptionType {
     DATABASE_ERROR,
     BAD_REQUEST,
     ENTITY_NOT_FOUND,
+    AUTH_REQUIRED,
 }
 
 export class Exception {
@@ -42,5 +43,9 @@ export class Exception {
 
     static EntityNotFound(reason?: any) {
         return new Exception(ExceptionType.ENTITY_NOT_FOUND, reason);
+    }
+
+    static AuthRequired(reason?: any) {
+        return new Exception(ExceptionType.AUTH_REQUIRED, reason);
     }
 }

@@ -1,3 +1,7 @@
 import { Request, Response } from 'express';
 
-export type RequestHandler = (req: Request, res: Response, next) => void;
+interface AuthRequest extends Request {
+    token?: any;
+}
+
+export type RequestHandler = (req: AuthRequest, res: Response, next) => void;

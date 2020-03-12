@@ -1,10 +1,11 @@
+import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import express from 'express';
 import { join } from 'path';
 import { createTask, getFile, getTask, getTasks, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
 import { FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
-import { handleException, parseForm } from './middleware';
+import { checkAuth, handleException, parseForm } from './middleware';
 
 config();
 
@@ -38,6 +39,8 @@ con.connect().then(() => {
 
     app
         .use(express.static(join(__dirname, 'public')))
+        .use(cookieParser())
+        .use(checkAuth())
         .use(FileRouter)
         .use(TaskCollectionRouter)
         .use(TaskRouter)

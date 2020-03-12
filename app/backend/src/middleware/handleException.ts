@@ -14,6 +14,9 @@ export function handleException(): ErrorRequestHandler {
             case ExceptionType.BAD_REQUEST:
                 res.status(HttpStatus.BAD_REQUEST).end();
                 break;
+            case ExceptionType.AUTH_REQUIRED:
+                res.status(HttpStatus.UNATHORIZED).end();
+                break;
             default:
                 next(reason);
         }

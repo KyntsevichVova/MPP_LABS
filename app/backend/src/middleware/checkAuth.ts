@@ -9,7 +9,7 @@ export function checkAuth(): RequestHandler {
             if (token) {
                 try {
                     const payload = verify(token, process.env.JWT_KEY);
-                    req.token = payload;
+                    req.token = payload as object;
                     next();
                 } catch (e) {
                     throw Exception.AuthRequired(e);

@@ -5,7 +5,7 @@ import { join } from 'path';
 import { createTask, getFile, getTask, getTasks, loginUser, registerUser, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
 import { AUTH_ENDPOINT, FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
-import { checkAuth, handleException, parseForm } from './middleware';
+import { checkAuth, handleException, issueToken, parseForm } from './middleware';
 
 config();
 
@@ -28,8 +28,8 @@ con.connect().then(() => {
     const TaskRouter = express.Router();
 
     AuthRouter
-        .post(`${AUTH_ENDPOINT}/login`, parseForm(con), loginUser(con))
-        .post(`${AUTH_ENDPOINT}/register`, parseForm(con), registerUser(con));
+        .post(`${AUTH_ENDPOINT}/login`, parseForm(con), loginUser(con), issueToken())
+        .post(`${AUTH_ENDPOINT}/register`, parseForm(con), registerUser(con), issueToken());
 
     FileRouter.route(`${FILES_ENDPOINT}/:file_id`)
         .get(getFile(con));

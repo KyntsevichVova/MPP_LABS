@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 
-interface AuthRequest extends Request {
-    token?: any;
+export interface AuthPayload {
+    user_id: number;
+    email: string;
+}
+
+export interface AuthRequest extends Request {
+    token?: object;
+    payload?: AuthPayload;
 }
 
 export type RequestHandler = (req: AuthRequest, res: Response, next) => void;

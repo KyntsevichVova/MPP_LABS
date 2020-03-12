@@ -49,7 +49,7 @@ function RegisterPage() {
                         <label htmlFor="email">Email:</label>
                         <input
                             className='form-control'
-                            type='text'
+                            type='email'
                             name='email'
                             value={user.email}
                             id='email'
@@ -66,6 +66,10 @@ function RegisterPage() {
 
                             {(errors.email_exists) && (
                                 'Such user already exists.'
+                            )}
+
+                            {(errors.email_long) && (
+                                'Email too long.'
                             )}
                         </small>
                     </div>

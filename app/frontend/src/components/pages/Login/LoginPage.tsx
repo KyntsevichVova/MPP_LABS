@@ -48,7 +48,7 @@ function LoginPage() {
                         <label htmlFor="email">Email:</label>
                         <input
                             className='form-control'
-                            type='text'
+                            type='email'
                             name='email'
                             value={user.email}
                             id='email'
@@ -61,6 +61,10 @@ function LoginPage() {
 
                             {(errors.no_such_user) && (
                                 'No such user/password pair exists.'
+                            )}
+
+                            {(errors.email_long) && (
+                                'Email too long.'
                             )}
                         </small>
                     </div>

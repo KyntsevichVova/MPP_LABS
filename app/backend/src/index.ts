@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import express from 'express';
 import { join } from 'path';
-import { createTask, getFile, getTask, getTasks, loginUser, registerUser, updateTask } from './handlers';
+import { createTask, getFile, getTask, getTasks, loginUser, logoutUser, registerUser, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
 import { AUTH_ENDPOINT, FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
 import { checkAuth, handleException, issueToken, parseForm } from './middleware';

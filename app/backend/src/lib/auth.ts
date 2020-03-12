@@ -4,6 +4,7 @@ import { LoginUserCredentials, RegisterUserCredentials } from './types';
 
 export interface RegisterError {
     email_required?: boolean;
+    email_long?: boolean;
     password_required?: boolean;
     invalid_email?: boolean;
     short_password?: boolean;
@@ -13,6 +14,7 @@ export interface RegisterError {
 
 export interface LoginError {
     email_required?: boolean;
+    email_long?: boolean;
     password_required?: boolean;
     no_such_user?: boolean;
 }
@@ -37,6 +39,10 @@ export class Auth {
         let anyError = false;
         if (!email) {
             errors.email_required = true;
+            anyError = true;
+        }
+        if (email.length > 50) {
+            errors.email_long = true;
             anyError = true;
         }
         if (!password) {
@@ -84,6 +90,10 @@ export class Auth {
         let anyError = false;
         if (!email) {
             errors.email_required = true;
+            anyError = true;
+        }
+        if (email.length > 50) {
+            errors.email_long = true;
             anyError = true;
         }
         if (!password) {

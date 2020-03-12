@@ -8,7 +8,7 @@ services:
             - postgres
         restart: always
         ports:
-            - "3001:3000"
+            - "300${LAB}:3000"
         volumes:
             - "/tmp/uploads/${LAB}:/app/uploads"
         environment: 

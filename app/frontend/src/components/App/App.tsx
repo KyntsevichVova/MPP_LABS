@@ -1,7 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { HOME_ENDPOINT, LOGIN_ENDPOINT, REGISTER_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
-import Navbar from '../Navbar/Navbar';
+import { HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, TASKS_ROUTE } from '../../lib/constants';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';
 import HomePage from '../pages/Home/Home';
@@ -13,22 +12,19 @@ function App() {
   	return (
     	<HashRouter>
 			<Switch>
-				<Route exact path={`${HOME_ENDPOINT}`}>
-					<Navbar />
+				<Route exact path={`${HOME_ROUTE}`}>
 					<HomePage />
 				</Route>
-				<Route exact path={`${TASKS_ENDPOINT}`}>
-					<Navbar />
+				<Route exact path={`${TASKS_ROUTE}`}>
 					<AddPage />
 				</Route>
-				<Route exact path={`${TASKS_ENDPOINT}/:task_id`}>
-					<Navbar />
+				<Route exact path={`${TASKS_ROUTE}/:task_id`}>
 					<EditPage />
 				</Route>
-				<Route path={`${LOGIN_ENDPOINT}`}>
+				<Route path={`${LOGIN_ROUTE}`}>
 					<LoginPage />
 				</Route>
-				<Route path={`${REGISTER_ENDPOINT}`}>
+				<Route path={`${REGISTER_ROUTE}`}>
 					<RegisterPage />
 				</Route>
 			</Switch>

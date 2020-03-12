@@ -1,7 +1,9 @@
 import React from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
+import { HOME_ROUTE, REGISTER_ENDPOINT } from '../../../lib/constants';
+import AuthNavbar from '../../AuthNavbar/AuthNavbar';
 
 interface UserCreds {
     email: string;
@@ -12,7 +14,7 @@ function RegisterPage() {
 
     const [user, setUser] = React.useState({} as UserCreds);
     const [errors, setErrors] = React.useState({} as any);
-    const { redirect, setShouldRedirect } = useRedirect('/');
+    const { redirect, setShouldRedirect } = useRedirect(HOME_ROUTE);
 
     const changeHandler = (event: any) => {
         setUser({...user, [event.target.name]: event.target.value})
@@ -22,8 +24,10 @@ function RegisterPage() {
         const data = new FormData();
         data.append('email', user.email);
         data.append('password', user.password);
-        API.post('/auth/register', {
-            body: data
+
+        API.post(`${REGISTER_ENDPOINT}`, {
+            body: data,
+            credentials: 'same-origin'
         }).then(response => {
             if (response.status === 200) {
                 setShouldRedirect(true);
@@ -41,10 +45,7 @@ function RegisterPage() {
 
             <div className="container auth-form">
                 <div className="d-flex flex-column">
-                    <div className='my-3'>
-                        <Link to={'/login'} className='btn btn-primary mx-3'>Login</Link>
-                        <Link to={'/register'} className='btn btn-primary mx-3'>Register</Link>
-                    </div>
+                    <AuthNavbar />
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
                         <input

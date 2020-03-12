@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FILES_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
+import { FILES_ENDPOINT, TASKS_ROUTE } from '../../lib/constants';
 import { OutputTask } from '../../lib/types';
 
 interface TaskCardProps {
@@ -37,7 +37,7 @@ function TaskCard({
                 </p>
                 
                 <Link
-                    to={`${TASKS_ENDPOINT}/${task_id}`}
+                    to={`${TASKS_ROUTE}/${task_id}`}
                     className='btn btn-primary mr-1'
                 >
                     Edit

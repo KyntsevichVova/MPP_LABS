@@ -2,13 +2,15 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { useRedirect } from '../../hooks';
 import { API } from '../../lib/api';
-import { HOME_ENDPOINT, TASKS_ENDPOINT } from '../../lib/constants';
+import { HOME_ROUTE, LOGIN_ROUTE, LOGOUT_ENDPOINT, TASKS_ROUTE } from '../../lib/constants';
 
 function Navbar() {
-    const { redirect, setShouldRedirect } = useRedirect('/login');
+    const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
 
     const logout = () => {
-        API.post('/auth/logout').then(() => {
+        API.post(`${LOGOUT_ENDPOINT}`, {
+            credentials: 'same-origin'
+        }).then(() => {
             setShouldRedirect(true);
         });
     };
@@ -16,22 +18,27 @@ function Navbar() {
     return (
         <>
             {redirect.should && (<Redirect to={redirect.to}/>)}
-            <nav className='navbar navbar-dark bg-primary'>
-                <div className='d-flex justify-content-between'>
+            <nav className='navbar navbar-dark bg-primary w-100'>
+                <div className='d-flex justify-content-between w-100'>
                     <ul className='navbar-nav d-flex flex-row'>
                         <li className='nav-item active mx-4'>
-                            <Link to={`${HOME_ENDPOINT}`} className='nav-link'>
+                            <Link to={`${HOME_ROUTE}`} className='nav-link'>
                                 Home
                             </Link>
                         </li>
                         <li className='nav-item active mx-4'>
-                            <Link to={`${TASKS_ENDPOINT}`} className='nav-link'>
+                            <Link to={`${TASKS_ROUTE}`} className='nav-link'>
                                 Add
                             </Link>
                         </li>
                     </ul>
                     <div>
-                        <button className='btn btn-danger' onClick={logout}>Log out</button>
+                        <button 
+                            className='btn btn-danger' 
+                            onClick={logout}
+                        >
+                            Log out
+                        </button>
                     </div>
                 </div>
             </nav>

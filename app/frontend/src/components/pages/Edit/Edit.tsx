@@ -2,18 +2,21 @@ import React from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { TASKS_ENDPOINT } from '../../../lib/constants';
+import { HOME_ROUTE, TASKS_ENDPOINT } from '../../../lib/constants';
 import { InputTask } from '../../../lib/types';
+import Navbar from '../../Navbar/Navbar';
 import TaskForm from '../../TaskForm/TaskForm';
 
 function EditPage() {
     const { task_id } = useParams();
-    const { redirect, setShouldRedirect, setToRedirect } = useRedirect('/');
+    const { redirect, setShouldRedirect, setToRedirect } = useRedirect(HOME_ROUTE);
     const [task, setTask] = React.useState(undefined as any);
     const [errors, setErrors] = React.useState({});
 
     React.useEffect(() => {
-        API.get(`${TASKS_ENDPOINT}/${task_id}`).then((res) => {
+        API.get(`${TASKS_ENDPOINT}/${task_id}`, {
+            credentials: 'same-origin'
+        }).then((res) => {
             res.json().then((data) => {
                 setTask(data.tasks[0]);
             });
@@ -29,7 +32,8 @@ function EditPage() {
             data.append('att_file', task.att_file);
 
         API.post(`${TASKS_ENDPOINT}/${task_id}`, {
-            body: data
+            body: data,
+            credentials: 'same-origin'
         }).then((response) => {
             if (response.status === 200) {
                 setShouldRedirect(true);
@@ -48,6 +52,7 @@ function EditPage() {
     return (
         <>
             {redirect.should && <Redirect to={redirect.to} />}
+            <Navbar />
             <div className='container'>
                 <div className='my-3'>
                     <TaskForm

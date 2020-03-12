@@ -32,3 +32,8 @@ export interface Errors {
     estimated_end_at?: boolean;
     status_present?: boolean;
 }
+
+export interface UserCreds {
+    email: string;
+    password: string;
+}

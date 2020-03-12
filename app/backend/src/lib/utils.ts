@@ -1,4 +1,4 @@
-import { days_in_month, months_in_year } from "./constants";
+import { days_in_month, months_in_year } from './constants';
 
 export function isLeapYear(year: number): boolean {
     return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));

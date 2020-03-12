@@ -1,19 +1,20 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { STATUS, TASKS_ENDPOINT } from '../../../lib/constants';
+import { LOGIN_ROUTE, STATUS, TASKS_ENDPOINT } from '../../../lib/constants';
+import { OutputTask } from '../../../lib/types';
+import Filters from '../../Filters/Filters';
+import Navbar from '../../Navbar/Navbar';
 import Placeholder from '../../Placeholder/Placeholder';
 import TaskCard from '../../TaskCard/TaskCard';
-import Filters from '../../Filters/Filters';
-import { OutputTask } from '../../../lib/types';
-import { useRedirect } from '../../../hooks';
-import { Redirect } from 'react-router-dom';
 
 const initialFilters = Object.fromEntries(Object.keys(STATUS).map((status) => [status, true]));
 
 function HomePage() {
     const [tasks, setTasks] = React.useState([] as Array<OutputTask>);
     const [filters, setFilters] = React.useState(initialFilters);
-    const { redirect, setShouldRedirect } = useRedirect('/login');
+    const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams();
@@ -25,7 +26,10 @@ function HomePage() {
                 .map(([key, value]) => key)
                 .join(',')
         );
-        API.get(TASKS_ENDPOINT, { searchParams }).then((res) => {
+        API.get(`${TASKS_ENDPOINT}`, {
+            searchParams,
+            credentials: 'same-origin'
+        }).then((res) => {
             if (res.status === 200) {
                 res.json().then((data) => {
                     setTasks(data.tasks);
@@ -46,6 +50,7 @@ function HomePage() {
     return (
         <>
             {redirect.should && (<Redirect to={redirect.to} />)}
+            <Navbar />
             {!tasks.length ? (
                 <Placeholder />
             ) : (

@@ -1,8 +1,8 @@
 import { Connection } from '../lib/connection';
 import { DEFAULT_FILTER } from '../lib/constants';
+import { Exception, HttpStatus } from '../lib/exception';
 import { Model } from '../lib/model';
 import { RequestHandler } from '../lib/types';
-import { ExceptionType, HttpStatus, Exception } from '../lib/exception';
 
 export function getTasks(con: Connection): RequestHandler {
     return (req, res, next) => {

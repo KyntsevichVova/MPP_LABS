@@ -12,7 +12,7 @@ export function issueToken(): RequestHandler {
             res
                 .status(HttpStatus.OK)
                 .cookie('token', token, {
-                    maxAge: expiresIn,
+                    maxAge: expiresIn * 1000,
                     httpOnly: true,
                 })
                 .end();

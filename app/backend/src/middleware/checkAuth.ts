@@ -1,6 +1,6 @@
 import { verify } from 'jsonwebtoken';
 import { Exception } from '../lib/exception';
-import { RequestHandler } from '../lib/types';
+import { AuthPayload, RequestHandler } from '../lib/types';
 
 export function checkAuth(): RequestHandler {
     return (req, res, next) => {
@@ -9,7 +9,7 @@ export function checkAuth(): RequestHandler {
             if (token) {
                 try {
                     const payload = verify(token, process.env.JWT_KEY);
-                    req.token = payload as object;
+                    req.payload = payload as AuthPayload;
                     next();
                 } catch (e) {
                     throw Exception.AuthRequired(e);

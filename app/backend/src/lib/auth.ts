@@ -33,103 +33,107 @@ export interface ValidLoginCredentials {
 }
 
 export class Auth {
-    static validateRegister(con: Connection, creds: RegisterUserCredentials): ValidRegisterCredentials {
-        const { email, password } = creds;
-        const errors: RegisterError = {};
-        let anyError = false;
-        if (!email) {
-            errors.email_required = true;
-            anyError = true;
-        }
-        if (email.length > 50) {
-            errors.email_long = true;
-            anyError = true;
-        }
-        if (!password) {
-            errors.password_required = true;
-            anyError = true;
-        }
-        if (password.length < 4) {
-            errors.short_password = true;
-            anyError = true;
-        }
-        if (password.length > 32) {
-            errors.long_password = true;
-            anyError = true;
-        }
-        con.query(
-            `SELECT 
-                * 
-            FROM 
-                "USER"
-            WHERE
-                EMAIL=$1
-            `,
-            [email]
-        ).then((result) => {
-            if (result.rows.length > 0) {
-                errors.email_exists = true;
+    static validateRegister(con: Connection, creds: RegisterUserCredentials): Promise<ValidRegisterCredentials> {
+        return new Promise((resolve) => {
+            const { email, password } = creds;
+            const errors: RegisterError = {};
+            let anyError = false;
+            if (!email) {
+                errors.email_required = true;
                 anyError = true;
             }
+            if (email.length > 50) {
+                errors.email_long = true;
+                anyError = true;
+            }
+            if (!password) {
+                errors.password_required = true;
+                anyError = true;
+            }
+            if (password.length < 4) {
+                errors.short_password = true;
+                anyError = true;
+            }
+            if (password.length > 32) {
+                errors.long_password = true;
+                anyError = true;
+            }
+            con.query(
+                `SELECT 
+                    * 
+                FROM 
+                    "USER"
+                WHERE
+                    EMAIL=$1
+                `,
+                [email]
+            ).then((result) => {
+                if (result.rows.length > 0) {
+                    errors.email_exists = true;
+                    anyError = true;
+                }
+            }).then(() => {
+                const hash = bcrypt.hashSync(password, 10);
+
+                resolve({
+                    validCreds: {
+                        email,
+                        password: hash
+                    },
+                    errors: anyError ? errors : undefined
+                });
+            });
         });
-
-        const hash = bcrypt.hashSync(password, 10);
-
-        return {
-            validCreds: {
-                email,
-                password: hash
-            },
-            errors: anyError ? errors : undefined
-        }
     }
 
-    static validateLogin(con: Connection, creds: LoginUserCredentials): ValidLoginCredentials {
-        const { email, password } = creds;
-        const errors: LoginError = {};
-        let anyError = false;
-        if (!email) {
-            errors.email_required = true;
-            anyError = true;
-        }
-        if (email.length > 50) {
-            errors.email_long = true;
-            anyError = true;
-        }
-        if (!password) {
-            errors.password_required = true;
-            anyError = true;
-        }
-
-        const validCreds: any = {};
-
-        con.query(
-            `SELECT 
-                * 
-            FROM 
-                "USER"
-            WHERE
-                EMAIL=$1
-            `,
-            [email]
-        ).then((result) => {
-            if (result.rows.length < 1) {
-                errors.no_such_user = true;
+    static validateLogin(con: Connection, creds: LoginUserCredentials): Promise<ValidLoginCredentials> {
+        return new Promise((resolve) => {
+            const { email, password } = creds;
+            const errors: LoginError = {};
+            let anyError = false;
+            if (!email) {
+                errors.email_required = true;
                 anyError = true;
-            } else {
-                if (!bcrypt.compareSync(password, result.rows[0].PASSWORD)) {
+            }
+            if (email.length > 50) {
+                errors.email_long = true;
+                anyError = true;
+            }
+            if (!password) {
+                errors.password_required = true;
+                anyError = true;
+            }
+
+            const validCreds: any = {};
+
+            con.query(
+                `SELECT 
+                    * 
+                FROM 
+                    "USER"
+                WHERE
+                    EMAIL=$1
+                `,
+                [email]
+            ).then((result) => {
+                if (result.rows.length < 1) {
                     errors.no_such_user = true;
                     anyError = true;
                 } else {
-                    validCreds.email = result.rows[0].email;
-                    validCreds.user_id = result.rows[0].user_id;
+                    if (!bcrypt.compareSync(password, result.rows[0].PASSWORD)) {
+                        errors.no_such_user = true;
+                        anyError = true;
+                    } else {
+                        validCreds.email = result.rows[0].email;
+                        validCreds.user_id = result.rows[0].user_id;
+                    }
                 }
-            }
+            }).then(() => {
+                resolve({
+                    validCreds,
+                    errors: anyError ? errors : undefined
+                });
+            });
         });
-
-        return {
-            validCreds,
-            errors: anyError ? errors : undefined
-        }
     }
 }

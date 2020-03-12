@@ -61,7 +61,7 @@ export class Auth {
             `SELECT 
                 * 
             FROM 
-                USER
+                'USER'
             WHERE
                 EMAIL=$1
             `,
@@ -107,7 +107,7 @@ export class Auth {
             `SELECT 
                 * 
             FROM 
-                USER
+                'USER'
             WHERE
                 EMAIL=$1
             `,

@@ -22,6 +22,7 @@ export const DEFAULT_FILTER = Object.entries(STATUS).map(([key, value]) => value
 
 export const UPLOADS_DIR = 'uploads';
 
+export const AUTH_ENDPOINT = '/auth';
 export const FILES_ENDPOINT = '/files';
 export const TASKS_ENDPOINT = '/tasks';
 

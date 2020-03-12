@@ -2,9 +2,9 @@ import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import express from 'express';
 import { join } from 'path';
-import { createTask, getFile, getTask, getTasks, updateTask } from './handlers';
+import { createTask, getFile, getTask, getTasks, loginUser, registerUser, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
-import { FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
+import { AUTH_ENDPOINT, FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
 import { checkAuth, handleException, parseForm } from './middleware';
 
 config();
@@ -22,9 +22,14 @@ const connectionOptions: ConnectionOptions = {
 const con: Connection = new PostgreSQLConnection(connectionOptions);
 
 con.connect().then(() => {
+    const AuthRouter = express.Router();
     const FileRouter = express.Router();
     const TaskCollectionRouter = express.Router();
     const TaskRouter = express.Router();
+
+    AuthRouter
+        .post(`${AUTH_ENDPOINT}/login`, parseForm(con), loginUser(con))
+        .post(`${AUTH_ENDPOINT}/register`, parseForm(con), registerUser(con));
 
     FileRouter.route(`${FILES_ENDPOINT}/:file_id`)
         .get(getFile(con));
@@ -40,6 +45,7 @@ con.connect().then(() => {
     app
         .use(express.static(join(__dirname, 'public')))
         .use(cookieParser())
+        .use(AuthRouter)
         .use(checkAuth())
         .use(FileRouter)
         .use(TaskCollectionRouter)

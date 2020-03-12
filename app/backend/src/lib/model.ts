@@ -1,4 +1,5 @@
-import { MAX_TASK_TEXT_LENGTH, STATUS, Status } from './constants';
+import { MAX_TASK_TEXT_LENGTH, STATUS } from './constants';
+import { Status } from './types';
 import { parseDate, printDate } from './utils';
 
 export interface BaseTask {

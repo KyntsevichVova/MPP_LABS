@@ -13,3 +13,8 @@ export interface UserCredentials {
 
 export interface LoginUserCredentials extends UserCredentials {}
 export interface RegisterUserCredentials extends UserCredentials {}
+
+export interface Status {
+    text: string;
+    value: string;
+}

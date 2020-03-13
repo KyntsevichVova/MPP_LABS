@@ -6,7 +6,21 @@ const del = require('delete');
 const tsProject = ts.createProject('backend/tsconfig.json');
 
 function copyUploads(source, target) {
-    return () => src(`${source}/**/*`).pipe(dest(target));
+    return function copyUploads() {
+        return src(`${source}/**/*`).pipe(dest(target));
+    }
+}
+
+function mkdir(dir) {
+    return function mkdir(cb) {
+        exec(`mkdir ${dir}`, { 
+            cwd: 'build' 
+        }, (err, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            cb(err);
+        });
+    }
 }
 
 function clean(cb) {
@@ -60,7 +74,8 @@ exports.build_backend = buildBackend;
 exports.build_frontend = buildFrontend;
 
 exports.build = series(
-    clean, 
+    copyUploads('build/uploads', 'uploads'),
+    clean,
     parallel(
         moveBackendDeps,
         moveBackendFiles,
@@ -69,7 +84,9 @@ exports.build = series(
             buildFrontend, 
             moveFrontend
         )
-    )
+    ),
+    mkdir('uploads'),
+    copyUploads('uploads', 'build/uploads')
 );
 
 exports.run = run;

@@ -27,38 +27,32 @@ export function createTask(con: Connection): RequestHandler {
                     ($1, $2, NOW(), $3, $4, $5)
                 RETURNING
                     TASK_ID`,
-                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id],
-                (error, result) => {
-                    if (error || result.rows.length < 1) {
-                        throw Exception.DatabaseError(error);
-                    }
+                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id]
+            ).then((result) => {
+                const task_id = result.rows[0].task_id;
 
-                    const task_id = result.rows[0].task_id;
-
-                    if (task.file_id) {
-                        con.query(
-                            `UPDATE TASK_FILE SET
-                                TASK_ID = $1
-                            WHERE
-                                FILE_ID = $2
-                            AND
-                                TASK_ID = -1
-                            AND
-                                CREATED_BY = $3`,
-                            [task_id, task.file_id, payload.user_id],
-                            (error, result) => {
-                                if (error) {
-                                    throw Exception.DatabaseError(error);
-                                } else {
-                                    res.status(HttpStatus.CREATED).end();
-                                }
-                            }
-                        );
-                    } else {
+                if (task.file_id) {
+                    con.query(
+                        `UPDATE TASK_FILE SET
+                            TASK_ID = $1
+                        WHERE
+                            FILE_ID = $2
+                        AND
+                            TASK_ID = -1
+                        AND
+                            CREATED_BY = $3`,
+                        [task_id, task.file_id, payload.user_id]
+                    ).then((result) => {
                         res.status(HttpStatus.CREATED).end();
-                    }
+                    }).catch((error) => {
+                        throw Exception.DatabaseError(error);
+                    });
+                } else {
+                    res.status(HttpStatus.CREATED).end();
                 }
-            );
+            }).catch((error) => {
+                throw Exception.DatabaseError(error);
+            });
         }).catch(next);
     }
 }

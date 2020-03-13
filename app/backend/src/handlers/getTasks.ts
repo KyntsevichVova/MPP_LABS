@@ -22,20 +22,17 @@ export function getTasks(con: Connection): RequestHandler {
                     TASK_STATUS IN (${filters})
                 AND
                     CREATED_BY = $1
-                ORDER BY 
+                ORDER BY
                     CREATED_AT DESC`,
-                [payload.user_id],
-                (error, result) => {
-                    if (error) {
-                        throw Exception.DatabaseError(error);
-                    } else {
-                        res
-                            .status(HttpStatus.OK)
-                            .send(new Model(result.rows.map(Model.createTask)))
-                            .end();
-                    }
-                }
-            );
+                [payload.user_id]
+            ).then((result) => {
+                res
+                    .status(HttpStatus.OK)
+                    .send(new Model(result.rows.map(Model.createTask)))
+                    .end();
+            }).catch((error) => {
+                throw Exception.DatabaseError(error);
+            });
         }).catch(next);
     }
 }

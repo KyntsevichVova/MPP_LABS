@@ -29,35 +29,30 @@ export function updateTask(con: Connection): RequestHandler {
                     FILE_ID = COALESCE($4, FILE_ID)
                 WHERE 
                     TASK_ID = ${task_id} AND (TASK_ID > 0) AND CREATED_BY = $5`,
-                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id],
-                (error, result) => {
-                    if (error) {
-                        throw Exception.DatabaseError(error);
-                    }
-                    if (task.file_id) {
-                        con.query(
-                            `UPDATE TASK_FILE SET
-                                TASK_ID = $1
-                            WHERE
-                                FILE_ID = $2
-                            AND
-                                TASK_ID = -1
-                            AND
-                                CREATED_BY = $3`,
-                            [task_id, task.file_id, payload.user_id],
-                            (error, result) => {
-                                if (error) {
-                                    throw Exception.DatabaseError(error);
-                                } else {
-                                    res.status(HttpStatus.OK).end();
-                                }
-                            }
-                        );
-                    } else {
+                [task.task_text, task.task_status, task.estimated_end_at, task.file_id, payload.user_id]
+            ).then((result) => {
+                if (task.file_id) {
+                    con.query(
+                        `UPDATE TASK_FILE SET
+                            TASK_ID = $1
+                        WHERE
+                            FILE_ID = $2
+                        AND
+                            TASK_ID = -1
+                        AND
+                            CREATED_BY = $3`,
+                        [task_id, task.file_id, payload.user_id]
+                    ).then((result) => {
                         res.status(HttpStatus.OK).end();
-                    }
+                    }).catch((error) => {
+                        throw Exception.DatabaseError(error);
+                    });
+                } else {
+                    res.status(HttpStatus.OK).end();
                 }
-            );
+            }).catch((error) => {
+                throw Exception.DatabaseError(error);
+            });
         }).catch(next);
     }
 }

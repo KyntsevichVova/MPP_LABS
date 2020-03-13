@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, TASKS_ROUTE } from '../../lib/constants';
+import { ADD_ROUTE, EDIT_ROUTE, HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE } from '../../lib/constants';
 import AddPage from '../pages/Add/Add';
 import EditPage from '../pages/Edit/Edit';
 import HomePage from '../pages/Home/Home';
@@ -15,10 +15,10 @@ function App() {
 				<Route exact path={`${HOME_ROUTE}`}>
 					<HomePage />
 				</Route>
-				<Route exact path={`${TASKS_ROUTE}`}>
+				<Route exact path={`${ADD_ROUTE}`}>
 					<AddPage />
 				</Route>
-				<Route exact path={`${TASKS_ROUTE}/:task_id`}>
+				<Route exact path={`${EDIT_ROUTE}/:task_id`}>
 					<EditPage />
 				</Route>
 				<Route path={`${LOGIN_ROUTE}`}>

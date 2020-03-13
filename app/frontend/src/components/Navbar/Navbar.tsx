@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { useRedirect } from '../../hooks';
 import { API } from '../../lib/api';
-import { HOME_ROUTE, LOGIN_ROUTE, LOGOUT_ENDPOINT, TASKS_ROUTE } from '../../lib/constants';
+import { ADD_ROUTE, HOME_ROUTE, LOGIN_ROUTE, LOGOUT_ENDPOINT } from '../../lib/constants';
 
 function Navbar() {
     const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
@@ -27,7 +27,7 @@ function Navbar() {
                             </Link>
                         </li>
                         <li className='nav-item active mx-4'>
-                            <Link to={`${TASKS_ROUTE}`} className='nav-link'>
+                            <Link to={`${ADD_ROUTE}`} className='nav-link'>
                                 Add
                             </Link>
                         </li>

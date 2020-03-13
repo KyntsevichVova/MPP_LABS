@@ -1,5 +1,6 @@
 export const HOME_ROUTE = '/';
-export const TASKS_ROUTE = '/tasks';
+export const ADD_ROUTE = '/add';
+export const EDIT_ROUTE = '/edit';
 export const LOGIN_ROUTE = '/login';
 export const REGISTER_ROUTE = '/register';
 

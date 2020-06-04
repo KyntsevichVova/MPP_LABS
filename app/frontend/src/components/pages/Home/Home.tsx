@@ -8,6 +8,7 @@ import Filters from '../../Filters/Filters';
 import Navbar from '../../Navbar/Navbar';
 import Placeholder from '../../Placeholder/Placeholder';
 import TaskCard from '../../TaskCard/TaskCard';
+import io from 'socket.io-client';
 
 const initialFilters = Object.fromEntries(Object.keys(STATUS).map((status) => [status, true]));
 
@@ -15,30 +16,23 @@ function HomePage() {
     const [tasks, setTasks] = React.useState([] as Array<OutputTask>);
     const [filters, setFilters] = React.useState(initialFilters);
     const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
+    const token = sessionStorage.getItem("token");
 
     React.useEffect(() => {
-        const searchParams = new URLSearchParams();
-        searchParams.append(
-            'filter', 
-            Object
+        const filter = Object
                 .entries(filters)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
-                .join(',')
-        );
-        API.get(`${TASKS_ENDPOINT}`, {
-            searchParams,
-            credentials: 'same-origin'
-        }).then((res) => {
-            if (res.status === 200) {
-                res.json().then((data) => {
-                    setTasks(data.tasks);
-                });
-            } else if (res.status === 401) {
+                .join(',');
+        const tasksCollection = io(`http://localhost:3000${TASKS_ENDPOINT}`);
+        tasksCollection.emit("get", token, filter, (response: any) => {
+            if (response.status === 200) {
+                setTasks(response.data.tasks);
+            } else if (response.status === 401) {
                 setShouldRedirect(true);
             }
         });
-    }, [filters]);
+    }, [filters, token]);
 
     const onSelect = (filter: string, checked: boolean) => {
         setFilters({

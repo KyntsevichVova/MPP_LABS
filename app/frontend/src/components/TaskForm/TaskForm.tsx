@@ -101,7 +101,7 @@ function TaskForm({
                 )}  
             </div>
             
-            <div className='form-group'>
+            {/*<div className='form-group'>
                 <label htmlFor='att_file'>Attachment:</label>
                 <input
                     className='form-control-file'
@@ -110,7 +110,7 @@ function TaskForm({
                     id='att_file'
                     onChange={handleFiles}
                 />
-            </div>
+                </div>*/}
 
             <button className='btn btn-primary' onClick={callback}>
                 Submit

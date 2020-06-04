@@ -43,7 +43,7 @@ function TaskCard({
                     Edit
                 </Link>
 
-                {!!file_id && (
+                {/*!!file_id && (
                     <a
                         href={`${FILES_ENDPOINT}/${file_id}`}
                         className='btn btn-info ml-1'
@@ -53,7 +53,7 @@ function TaskCard({
                     >
                         Attachment
                     </a>
-                )}
+                )*/}
             </div>
         </div>
     );

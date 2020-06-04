@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Socket } from 'socket.io';
 
 export interface AuthPayload {
     user_id: number;
@@ -10,6 +11,7 @@ export interface AuthRequest extends Request {
 }
 
 export type RequestHandler = (req: AuthRequest, res: Response, next) => void;
+export type SocketHandler = (socket: Socket, next) => void;
 
 export interface UserCredentials {
     email?: string;

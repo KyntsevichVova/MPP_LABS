@@ -4,6 +4,7 @@ import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
 import { HOME_ROUTE, REGISTER_ENDPOINT } from '../../../lib/constants';
 import AuthNavbar from '../../AuthNavbar/AuthNavbar';
+import io from 'socket.io-client';
 
 interface UserCreds {
     email: string;
@@ -21,20 +22,18 @@ function RegisterPage() {
     };
 
     const okCallback = (user: UserCreds) => {
-        const data = new FormData();
-        data.append('email', user.email);
-        data.append('password', user.password);
-
-        API.post(`${REGISTER_ENDPOINT}`, {
-            body: data,
-            credentials: 'same-origin'
-        }).then(response => {
+        const data = {
+            email: user.email,
+            password: user.password,
+        }
+        const tasksCollection = io(`http://localhost:3000/auth`);
+        tasksCollection.emit("register", data, (response: any) => {
+            console.log(response);
             if (response.status === 200) {
+                sessionStorage.setItem("token", response.token);
                 setShouldRedirect(true);
             } else {
-                response.json().then(json => {
-                    setErrors(json.errors);
-                });
+                setErrors(response.data.errors);
             }
         });
     };

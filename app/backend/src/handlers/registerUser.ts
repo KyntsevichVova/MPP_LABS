@@ -3,9 +3,35 @@ import { Connection } from '../lib/connection';
 import { Exception, HttpStatus } from '../lib/exception';
 import { AuthPayload, RegisterUserCredentials, RequestHandler } from '../lib/types';
 
-export function registerUser(con: Connection): RequestHandler {
-    return (req, res, next) => {
-        Promise.resolve(req.body as RegisterUserCredentials).then((creds) => {
+export function registerUser(con: Connection) {
+    return (creds: RegisterUserCredentials) => {
+        return new Promise((resolve, reject) => {
+            Auth.validateRegister(con, creds).then(({ validCreds, errors }) => {
+                if (errors) {
+                    const response = {
+                        status: HttpStatus.BAD_REQUEST,
+                        data: { creds, errors },
+                    }
+                    reject(response);
+                    return;
+                }
+    
+                con.query(
+                    `INSERT INTO "USER"
+                        (EMAIL, "PASSWORD")
+                    VALUES
+                        ($1, $2)
+                    RETURNING
+                        USER_ID, EMAIL`,
+                    [validCreds.email, validCreds.password]
+                ).then((result) => {
+                    resolve(result.rows[0] as AuthPayload);
+                }).catch((reason) => {
+                    //throw Exception.DatabaseError(reason);
+                });
+            });
+        });
+        /*Promise.resolve(req.body as RegisterUserCredentials).then((creds) => {
             Auth.validateRegister(con, creds).then(({ validCreds, errors }) => {
                 if (errors) {
                     res
@@ -30,6 +56,6 @@ export function registerUser(con: Connection): RequestHandler {
                     throw Exception.DatabaseError(reason);
                 });
             });
-        }).catch(next);
+        }).catch(next);*/
     }
 }

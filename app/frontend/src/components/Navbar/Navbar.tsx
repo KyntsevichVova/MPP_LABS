@@ -8,11 +8,8 @@ function Navbar() {
     const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
 
     const logout = () => {
-        API.post(`${LOGOUT_ENDPOINT}`, {
-            credentials: 'same-origin'
-        }).then(() => {
-            setShouldRedirect(true);
-        });
+        sessionStorage.removeItem("token");
+        setShouldRedirect(true);
     };
 
     return (

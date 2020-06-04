@@ -3,9 +3,22 @@ import { Connection } from '../lib/connection';
 import { HttpStatus } from '../lib/exception';
 import { AuthPayload, LoginUserCredentials, RequestHandler } from '../lib/types';
 
-export function loginUser(con: Connection): RequestHandler {
-    return (req, res, next) => {
-        Promise.resolve(req.body as LoginUserCredentials).then((creds) => {
+export function loginUser(con: Connection) {
+    return (creds: LoginUserCredentials) => {
+        return new Promise((resolve, reject) => {
+            Auth.validateLogin(con, creds).then(({ validCreds, errors }) => {
+                if (errors) {
+                    const response = {
+                        status: HttpStatus.BAD_REQUEST,
+                        data: { creds, errors },
+                    };
+                    reject(response);
+                    return;
+                }
+                resolve(validCreds);
+            });
+        });
+        /*Promise.resolve(req.body as LoginUserCredentials).then((creds) => {
             Auth.validateLogin(con, creds).then(({ validCreds, errors }) => {
                 if (errors) {
                     res
@@ -18,6 +31,6 @@ export function loginUser(con: Connection): RequestHandler {
                 req.payload = validCreds as AuthPayload;
                 next();
             });
-        }).catch(next);
+        }).catch(next);*/
     }
 }

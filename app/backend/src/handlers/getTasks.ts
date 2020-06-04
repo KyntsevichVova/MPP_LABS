@@ -4,9 +4,37 @@ import { Exception, HttpStatus } from '../lib/exception';
 import { Model } from '../lib/model';
 import { RequestHandler } from '../lib/types';
 
-export function getTasks(con: Connection): RequestHandler {
-    return (req, res, next) => {
-        Promise.resolve().then(() => {
+export function getTasks(con: Connection) {
+    return (payload, filter) => {
+        return new Promise((resolve, reject) => {
+            const filters = String(filter ?? DEFAULT_FILTER)
+                .split(',')
+                .map((filter) => con.escape(filter.toUpperCase()))
+                .join(', ');
+            
+            con.query(
+                `SELECT * FROM TASK
+                WHERE
+                    TASK_ID > 0
+                AND
+                    TASK_STATUS IN (${filters})
+                AND
+                    CREATED_BY = $1
+                ORDER BY
+                    CREATED_AT DESC`,
+                [payload.user_id]
+            ).then((result) => {
+                const response = {
+                    status: HttpStatus.OK,
+                    data: new Model(result.rows.map(Model.createTask)),
+                };
+                resolve(response);
+            }).catch((error) => {
+                reject(error);
+            });
+ 
+        });
+        /*Promise.resolve().then(() => {
             const filters = String(req.query.filter ?? DEFAULT_FILTER)
                 .split(',')
                 .map((filter) => con.escape(filter.toUpperCase()))
@@ -33,6 +61,6 @@ export function getTasks(con: Connection): RequestHandler {
             }).catch((error) => {
                 throw Exception.DatabaseError(error);
             });
-        }).catch(next);
+        }).catch(next);*/
     }
 }

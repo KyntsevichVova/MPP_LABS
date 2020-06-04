@@ -1,16 +1,13 @@
-import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
-import express, { response } from 'express';
+import express from 'express';
 import { createServer } from 'http';
 import { join } from 'path';
 import socketio from 'socket.io';
-import { createTask, getFile, getTask, getTasks, loginUser, logoutUser, registerUser, updateTask } from './handlers';
+import { createTask, getTask, getTasks, loginUser, registerUser, updateTask } from './handlers';
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
-import { AUTH_ENDPOINT, FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
-import { checkAuth, handleException, issueToken, parseForm } from './middleware';
+import { AUTH_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
 import { AuthPayload } from './lib/types';
-import { HttpStatus } from './lib/exception';
-import { checkAuthMiddleware } from './middleware/checkAuth';
+import { checkAuth, issueToken } from './middleware';
 
 config();
 
@@ -27,36 +24,7 @@ const connectionOptions: ConnectionOptions = {
 const con: Connection = new PostgreSQLConnection(connectionOptions);
 
 con.connect().then(() => {
-    /*const AuthRouter = express.Router();
-    const FileRouter = express.Router();
-    const TaskCollectionRouter = express.Router();
-    const TaskRouter = express.Router();
-
-    AuthRouter
-        .post(`${AUTH_ENDPOINT}/logout`, logoutUser())
-        .post(`${AUTH_ENDPOINT}/login`, parseForm(con), loginUser(con), issueToken())
-        .post(`${AUTH_ENDPOINT}/register`, parseForm(con), registerUser(con), issueToken());
-
-    FileRouter.route(`${FILES_ENDPOINT}/:file_id`)
-        .get(getFile(con));*/
-
-    /*TaskCollectionRouter.route(`${TASKS_ENDPOINT}`)
-        .get(getTasks(con))
-        .post(parseForm(con), createTask(con));*/
-
-    /*TaskRouter.route(`${TASKS_ENDPOINT}/:task_id`)
-        .get(getTask(con))
-        .post(parseForm(con), updateTask(con));*/
-
-    app
-        .use(express.static(join(__dirname, 'public')))
-        //.use(cookieParser())
-        //.use(AuthRouter)
-        //.use(checkAuthMiddleware())
-        //.use(FileRouter)
-        //.use(TaskCollectionRouter)
-        //.use(TaskRouter)
-        //.use(handleException());
+    app.use(express.static(join(__dirname, 'public')))
 
     const server = createServer(app);
     const io = socketio(server);

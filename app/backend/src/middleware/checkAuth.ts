@@ -22,20 +22,6 @@ export function checkAuth() {
                 reject(response);
             }
         });
-        /*Promise.resolve().then(() => {
-            const token = req.cookies.token;
-            if (token) {
-                try {
-                    const payload = verify(token, process.env.JWT_KEY);
-                    req.payload = payload as AuthPayload;
-                    next();
-                } catch (e) {
-                    throw Exception.AuthRequired(e);
-                }
-            } else {
-                throw Exception.AuthRequired();
-            }
-        }).catch(next);*/
     }
 }
 

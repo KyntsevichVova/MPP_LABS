@@ -56,7 +56,7 @@ export class Model {
             task_status: STATUS[value.task_status] ?? STATUS.OPENED,
             estimated_end_at: value.estimated_end_at ? printDate(new Date(value.estimated_end_at)) : '',
             deadline: value.estimated_end_at ? (new Date() >= new Date(value.estimated_end_at)) : false,
-            file_id: value.file_id ?? ''
+            file_id: value.file_id
         };
     }
 

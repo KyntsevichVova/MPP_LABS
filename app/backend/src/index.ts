@@ -6,6 +6,8 @@ import { createTask, getFile, getTask, getTasks, loginUser, logoutUser, register
 import { Connection, ConnectionOptions, PostgreSQLConnection } from './lib/connection';
 import { AUTH_ENDPOINT, FILES_ENDPOINT, TASKS_ENDPOINT } from './lib/constants';
 import { checkAuth, handleException, issueToken, parseForm } from './middleware';
+import graphqlHTTP from 'express-graphql';
+import { schema } from './lib/schema';
 
 config();
 
@@ -35,13 +37,21 @@ con.connect().then(() => {
     FileRouter.route(`${FILES_ENDPOINT}/:file_id`)
         .get(getFile(con));
 
-    TaskCollectionRouter.route(`${TASKS_ENDPOINT}`)
+    /*TaskCollectionRouter.route(`${TASKS_ENDPOINT}`)
         .get(getTasks(con))
         .post(parseForm(con), createTask(con));
 
     TaskRouter.route(`${TASKS_ENDPOINT}/:task_id`)
         .get(getTask(con))
-        .post(parseForm(con), updateTask(con));
+        .post(parseForm(con), updateTask(con));*/
+
+
+    const root = {
+        getTask: getTask(con),
+        getTasks: getTasks(con),
+        createTask: createTask(con),
+        updateTask: updateTask(con),
+    };
 
     app
         .use(express.static(join(__dirname, 'public')))
@@ -49,8 +59,15 @@ con.connect().then(() => {
         .use(AuthRouter)
         .use(checkAuth())
         .use(FileRouter)
-        .use(TaskCollectionRouter)
-        .use(TaskRouter)
+        .use('/form', parseForm(con), (req, res) => res.send(req.body).status(200).end())
+        .use('/graphql', (req, res, next) => {
+            return graphqlHTTP({
+                schema: schema,
+                rootValue: root,
+                context: { req, res, next },
+                graphiql: true,
+            })(req, res)
+        })
         .use(handleException());
         
     app.listen(3000);

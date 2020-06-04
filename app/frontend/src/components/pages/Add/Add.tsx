@@ -20,19 +20,57 @@ function AddPage() {
         if (task.att_file)
             data.append('att_file', task.att_file);
 
-        API.post(`${TASKS_ENDPOINT}`, {
+        API.post(`/form`, {
             body: data,
             credentials: 'same-origin'
         }).then((response) => {
-            if (response.status === 201) {
-                setShouldRedirect(true);
-            } else if (response.status === 401) {
+            if (response.status === 401) {
                 setToRedirect(LOGIN_ROUTE);
                 setShouldRedirect(true);
             } else {
-                response.json().then((result) => {
-                    setTask(result.tasks[0]);
-                    setErrors(result.errors);
+                response.json().then((body) => {
+                    task.file_id = body.file_id;
+                    API.post(`/graphql`, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            query: `mutation AddTask($task: InputTask!) {
+                                createTask(task: $task) {
+                                    tasks {
+                                        task_id
+                                        task_text
+                                        estimated_end_at
+                                        file_id
+                                        deadline
+                                        task_status {
+                                            text
+                                            value
+                                        }                          
+                                    }
+                                    errors {
+                                        text_short
+                                        text_long
+                                        estimated_end_at
+                                        status_present                            
+                                    }
+                                }
+                            }`,
+                            variables: { task }
+                        }),
+                    }).then((response) => {
+                        response.json().then((result) => {
+                            const data = result.data.createTask;
+                            if (!data?.errors) {
+                                setShouldRedirect(true);
+                            } else {
+                                setTask(data.tasks[0]);
+                                setErrors(data.errors);            
+                            }
+                        });
+                    });
                 });
             }
         });

@@ -17,25 +17,44 @@ function HomePage() {
     const { redirect, setShouldRedirect } = useRedirect(LOGIN_ROUTE);
 
     React.useEffect(() => {
-        const searchParams = new URLSearchParams();
-        searchParams.append(
-            'filter', 
-            Object
+        const filter = Object
                 .entries(filters)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
-                .join(',')
-        );
-        API.get(`${TASKS_ENDPOINT}`, {
-            searchParams,
-            credentials: 'same-origin'
-        }).then((res) => {
-            if (res.status === 200) {
-                res.json().then((data) => {
+                .join(',');
+
+        API.post(`/graphql`, {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `query GetTasks($filter: String) {
+                    getTasks(filter: $filter) {
+                        tasks {
+                            task_id
+                            task_text
+                            estimated_end_at
+                            file_id
+                            deadline
+                            task_status {
+                                text
+                                value
+                            }                          
+                        }
+                    }
+                }`,
+                variables: { filter }
+            }),
+        }).then((response) => {
+            if (response.status === 401) {
+                setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    const data = result.data.getTasks;
                     setTasks(data.tasks);
                 });
-            } else if (res.status === 401) {
-                setShouldRedirect(true);
             }
         });
     }, [filters]);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { useRedirect } from '../../../hooks';
 import { API } from '../../../lib/api';
-import { HOME_ROUTE, TASKS_ENDPOINT } from '../../../lib/constants';
+import { HOME_ROUTE, TASKS_ENDPOINT, LOGIN_ROUTE } from '../../../lib/constants';
 import { InputTask } from '../../../lib/types';
 import Navbar from '../../Navbar/Navbar';
 import TaskForm from '../../TaskForm/TaskForm';
@@ -14,12 +14,40 @@ function EditPage() {
     const [errors, setErrors] = React.useState({});
 
     React.useEffect(() => {
-        API.get(`${TASKS_ENDPOINT}/${task_id}`, {
-            credentials: 'same-origin'
-        }).then((res) => {
-            res.json().then((data) => {
-                setTask(data.tasks[0]);
-            });
+        API.post(`/graphql`, {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `query GetTask($id: String!){
+                    getTask(id: $id) {
+                        tasks {
+                            task_id
+                            task_text
+                            estimated_end_at
+                            file_id
+                            deadline
+                            task_status {
+                                text
+                                value
+                            }                          
+                        }
+                    }
+                }`,
+                variables: { id: task_id }
+            }),
+        }).then((response) => {
+            if (response.status === 401) {
+                setToRedirect(LOGIN_ROUTE);
+                setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    const data = result.data.getTask;
+                    setTask(data.tasks[0]);
+                });
+            }
         });
     }, [task_id]);
 
@@ -31,19 +59,57 @@ function EditPage() {
         if (task.att_file)
             data.append('att_file', task.att_file);
 
-        API.post(`${TASKS_ENDPOINT}/${task_id}`, {
+        API.post(`/form`, {
             body: data,
             credentials: 'same-origin'
         }).then((response) => {
-            if (response.status === 200) {
-                setShouldRedirect(true);
-            } else if (response.status === 401) {
-                setToRedirect('/login');
+            if (response.status === 401) {
+                setToRedirect(LOGIN_ROUTE);
                 setShouldRedirect(true);
             } else {
-                response.json().then((result) => {
-                    setTask(result.tasks[0]);
-                    setErrors(result.errors);
+                response.json().then((body) => {
+                    task.file_id = body.file_id;
+                    API.post(`/graphql`, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            query: `mutation UpdateTask($task: InputTask!, $id: String!){
+                                updateTask(id: $id, task: $task) {
+                                    tasks {
+                                        task_id
+                                        task_text
+                                        estimated_end_at
+                                        file_id
+                                        deadline
+                                        task_status {
+                                            text
+                                            value
+                                        }                          
+                                    }
+                                    errors {
+                                        text_short
+                                        text_long
+                                        estimated_end_at
+                                        status_present                            
+                                    }
+                                }
+                            }`,
+                            variables: { id: task_id, task }
+                        }),
+                    }).then((response) => {
+                        response.json().then((result) => {
+                            const data = result.data.updateTask;
+                            if (!data?.errors) {
+                                setShouldRedirect(true);
+                            } else {
+                                setTask(data.tasks[0]);
+                                setErrors(data.errors);            
+                            }
+                        });
+                    });
                 });
             }
         });
